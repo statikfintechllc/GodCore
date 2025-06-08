@@ -13,11 +13,11 @@ dependencies:
       - gradio==4.16.0
       - requests==2.32.3
       - numpy==1.26.4
-      - torch==2.7.0
+      - torch==2.1.2
       - torchvision==0.16.2
       - huggingface-hub==0.30.2
       - sentencepiece==0.1.99
-      - rich==14.0.0
+      - rich>=13.0.0,<14.0.0
       - pydantic==2.11.4
       - python-multipart==0.0.20
       - orjson==3.10.18

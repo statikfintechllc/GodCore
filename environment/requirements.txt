@@ -9,7 +9,7 @@ torch==2.7.0
 torchvision==0.16.2
 huggingface-hub==0.30.2
 sentencepiece==0.1.99
-rich==14.0.0
+rich>=13.0.0,<14.0.0
 pydantic==2.11.4
 python-multipart==0.0.20
 orjson==3.10.18
