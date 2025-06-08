@@ -14,6 +14,7 @@ godcore/
 ├── README.md
 ├── LICENSE
 ├── start_all.sh
+├── stop_all.sh
 │
 ├── environment/
 │       ├── install.sh
@@ -32,11 +33,11 @@ godcore/
 │   │   ├── index.js
 │   │   └── App.css
 │   │
-│   └── node_modules/
+│   └── node_modules/     # All node_modules are built here
 │       └── ...
 │
 ├── llama-cpp-python/        
-│       └── ...           # All llama_cpp files and folders here
+│       └── ...           # All llama-cpp-python files and folders here
 │
 ├── models/
 │       └── Mistral-13B-Instruct/
@@ -52,7 +53,7 @@ godcore/
 
 ```bash
 # 1. Install all dependencies and set up environment
-bash install.sh
+./install.sh
 
 # 2. Place your model file here:
 #    godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
@@ -68,7 +69,7 @@ conda activate runmistral
 
 ```bash
 # From godcore/ root:
-zsh start_all.sh
+./start_all.sh
 
 # This will:
 #   - Launch the FastAPI backend (localhost:8000)
