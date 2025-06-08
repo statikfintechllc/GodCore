@@ -29,18 +29,23 @@ MODEL_PATH = "/home/statiksmoke8/godcore/models/Mistral-13B-Instruct/mistral-13b
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=40,       # FULL offload for 13B, always use all available
-    main_gpu=0,            # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[0.5, 0.5], # Split evenly for two 3060s, adjust if VRAM is not matched
-    n_threads=8,           # Only affects CPU, low = more GPU work, high = more CPU
+    n_gpu_layers=40,  # FULL offload for 13B, always use all available
+    main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
+    TENSOR_SPLIT=[
+        0.5,
+        0.5,
+    ],  # Split evenly for two 3060s, adjust if VRAM is not matched
+    n_threads=8,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,
     verbose=True,
 )
 
+
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     content: str
+
 
 class ChatRequest(BaseModel):
     model: str
@@ -51,25 +56,36 @@ class ChatRequest(BaseModel):
     stop: Optional[List[str]] = None
 
 
-print(f"TORCH CUDA available: {torch.cuda.is_available()}, device count: {torch.cuda.device_count()}")
+print(
+    f"TORCH CUDA available: {torch.cuda.is_available()}, device count: {torch.cuda.device_count()}"
+)
 
 
 @app.get("/")
 def root():
-    return {"message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."}
+    return {
+        "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
+    }
+
 
 @app.post("/v1/chat/completions")
 def chat_completion(request: ChatRequest):
-    prompt = "".join(
-        [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
-    ) + "Assistant:"
+    prompt = (
+        "".join(
+            [
+                f"{msg.role.capitalize()}: {msg.content.strip()}\n"
+                for msg in request.messages
+            ]
+        )
+        + "Assistant:"
+    )
     try:
         output = llm(
             prompt=prompt,
             temperature=request.temperature,
             top_p=request.top_p,
             max_tokens=request.max_tokens,
-            stop=request.stop or ["</s>", "User:", "Assistant:"]
+            stop=request.stop or ["</s>", "User:", "Assistant:"],
         )
     except Exception as e:
         return {"error": "InferenceFailure", "detail": str(e)}
@@ -92,11 +108,12 @@ def chat_completion(request: ChatRequest):
         "usage": {
             "prompt_tokens": output.get("prompt_tokens", 0),
             "completion_tokens": output.get("completion_tokens", 0),
-            "total_tokens": output.get("prompt_tokens", 0) + output.get("completion_tokens", 0),
+            "total_tokens": output.get("prompt_tokens", 0)
+            + output.get("completion_tokens", 0),
         },
     }
+
 
 if __name__ == "__main__":
     print("🚀 Devin-compatible API ready on http://localhost:8000")
     uvicorn.run("run_llama:app", host="0.0.0.0", port=8000)
-
