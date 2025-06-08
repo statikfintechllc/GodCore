@@ -49,17 +49,18 @@ godcore/
 
 ---
 
-## **Setup**
+## **Install & Setup**
 
 ```bash
-# 1. Install all dependencies and set up environment
-./install.sh
+# 1. Clone and get in
+git clone https://github.com/statikfintechllc/godcore.git && \
+cd godcore
 
-# 2. Place your model file here:
+# 2. Install all dependencies and set up environment
+cd environment && ./install.sh
+
+# 3. After install.sh runs place your downloaded model file here:
 #    godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
-
-# 3. (Optional: Clean up) Remove .git from any submodules, especially if you copied llama-cpp-python:
-rm -rf llama_cpp/.git
 
 # 4. Activate the environment
 conda activate runmistral
@@ -69,7 +70,7 @@ conda activate runmistral
 
 ```bash
 # From godcore/ root:
-./start_all.sh
+cd godcore && ./start_all.sh
 
 # This will:
 #   - Launch the FastAPI backend (localhost:8000)
