@@ -1,0 +1,107 @@
+body, html, #root {
+  background: #18181a;
+  color: #f3f3f3;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.card {
+  background: #23232b;
+  padding: 2rem 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px #0006;
+  margin-top: 5vh;
+  min-width: 340px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+h1 {
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.01em;
+}
+.sub {
+  font-size: 1.1rem;
+  color: #f04;
+  letter-spacing: 0.1em;
+}
+.prompt {
+  font-size: 1.06rem;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #38384d;
+  border-radius: 10px;
+  background: #23232b;
+  color: #f3f3f3;
+  resize: vertical;
+}
+.send {
+  padding: 0.6rem 1.2rem;
+  background: #2d80e7;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  box-shadow: 0 2px 12px #0058 0px;
+  cursor: pointer;
+  margin-bottom: 0.8rem;
+  transition: background 0.15s;
+}
+.send:disabled {
+  opacity: 0.7;
+  background: #5a5a5a;
+  cursor: not-allowed;
+}
+.result {
+  background: #131318;
+  border-radius: 10px;
+  margin-top: 1.2rem;
+  padding: 1rem;
+  word-break: break-word;
+  position: relative;
+}
+.copy {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.96rem;
+  background: #2d80e7;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.error {
+  color: #fff0f0;
+  background: #af2137;
+  border-radius: 8px;
+  padding: 0.7rem 1.1rem;
+  margin: 1rem 0 0.5rem 0;
+}
+footer {
+  margin-top: 6vh;
+  text-align: center;
+  font-size: 0.97rem;
+  color: #bbb;
+  letter-spacing: 0.02em;
+  opacity: 0.92;
+}
+footer a {
+  color: #2d80e7;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
