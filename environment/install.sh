@@ -41,6 +41,11 @@ if ! conda info --envs | grep -q "$ENV_NAME"; then
     pip install -r requirements.txt
 fi
 
+cd /home/statiksmoke8/godcore/frontend
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate runmistral
+npm install
+
 echo "[*] Verifying CUDA and GPU support..."
 python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()}"); print(f"TORCH device count: {torch.cuda.device_count()}")'
 
