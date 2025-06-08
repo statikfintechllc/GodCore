@@ -49,6 +49,7 @@ pip uninstall llama-cpp-python -y
 CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir
 python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()} - device count: {torch.cuda.device_count()}")'
 sudo apt update && sudo apt install nvidia-cuda-toolkit
+pip install torch==2.2.2+cu121 torchvision==0.17.2+cu121 torchaudio==2.2.2+cu121 --index-url https://download.pytorch.org/whl/cu121
 conda deactivate
 
 

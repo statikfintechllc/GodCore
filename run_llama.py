@@ -1,7 +1,6 @@
 import os
 import time
 import uuid
-import torch
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -25,11 +24,11 @@ app.add_middleware(
 )
 
 # --- Model Config ---
-MODEL_PATH = "/home/statiksmoke8/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
+MODEL_PATH = "/home/statiksmoke8/AscendNet/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=40,  # FULL offload for 13B, always use all available
+    n_gpu_layers=35,  # FULL offload for 13B, always use all available
     main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
     TENSOR_SPLIT=[
         0.5,
@@ -54,11 +53,6 @@ class ChatRequest(BaseModel):
     top_p: Optional[float] = 0.9
     max_tokens: Optional[int] = 16384
     stop: Optional[List[str]] = None
-
-
-print(
-    f"TORCH CUDA available: {torch.cuda.is_available()}, device count: {torch.cuda.device_count()}"
-)
 
 
 @app.get("/")
