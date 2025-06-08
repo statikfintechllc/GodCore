@@ -17,7 +17,7 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "mistral-13b-instruct-v0.1",
+          model: "mistral",
           messages: [
             { role: "user", content: prompt }
           ]

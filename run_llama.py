@@ -8,6 +8,18 @@ from pydantic import BaseModel
 from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# --- Enable CORS for all origins (for development) ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Environment Setup ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
