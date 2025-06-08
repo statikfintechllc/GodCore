@@ -13,6 +13,7 @@ FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
 start_backend() {
     echo "\n[*] Starting backend (run_llama.py)..."
     cd "$BACKEND_DIR"
+    source ~/miniconda3/etc/profile.d/conda.sh
     conda activate $ENV_NAME
     nohup python run_llama.py > "$BACKEND_LOG" 2>&1 &
     echo "[*] Backend log: $BACKEND_LOG"

@@ -1,5 +1,4 @@
-"""llama-cpp-python server from scratch in a single file.
-"""
+"""llama-cpp-python server from scratch in a single file."""
 
 # import llama_cpp
 

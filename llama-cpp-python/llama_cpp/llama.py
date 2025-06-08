@@ -260,28 +260,28 @@ class Llama:
             for i, (k, v) in enumerate(kv_overrides.items()):
                 self._kv_overrides_array[i].key = k.encode("utf-8")
                 if isinstance(v, bool):
-                    self._kv_overrides_array[
-                        i
-                    ].tag = llama_cpp.LLAMA_KV_OVERRIDE_TYPE_BOOL
+                    self._kv_overrides_array[i].tag = (
+                        llama_cpp.LLAMA_KV_OVERRIDE_TYPE_BOOL
+                    )
                     self._kv_overrides_array[i].value.val_bool = v
                 elif isinstance(v, int):
-                    self._kv_overrides_array[
-                        i
-                    ].tag = llama_cpp.LLAMA_KV_OVERRIDE_TYPE_INT
+                    self._kv_overrides_array[i].tag = (
+                        llama_cpp.LLAMA_KV_OVERRIDE_TYPE_INT
+                    )
                     self._kv_overrides_array[i].value.val_i64 = v
                 elif isinstance(v, float):
-                    self._kv_overrides_array[
-                        i
-                    ].tag = llama_cpp.LLAMA_KV_OVERRIDE_TYPE_FLOAT
+                    self._kv_overrides_array[i].tag = (
+                        llama_cpp.LLAMA_KV_OVERRIDE_TYPE_FLOAT
+                    )
                     self._kv_overrides_array[i].value.val_f64 = v
                 elif isinstance(v, str):  # type: ignore
                     v_bytes = v.encode("utf-8")
                     if len(v_bytes) > 128:  # TODO: Make this a constant
                         raise ValueError(f"Value for {k} is too long: {v}")
                     v_bytes = v_bytes.ljust(128, b"\0")
-                    self._kv_overrides_array[
-                        i
-                    ].tag = llama_cpp.LLAMA_KV_OVERRIDE_TYPE_STR
+                    self._kv_overrides_array[i].tag = (
+                        llama_cpp.LLAMA_KV_OVERRIDE_TYPE_STR
+                    )
                     # copy min(v_bytes, 128) to str_value
                     address = typing.cast(
                         int,
@@ -297,9 +297,9 @@ class Llama:
                 else:
                     raise ValueError(f"Unknown value type for {k}: {v}")
 
-            self._kv_overrides_array[
-                -1
-            ].key = b"\0"  # ensure sentinel element is zeroed
+            self._kv_overrides_array[-1].key = (
+                b"\0"  # ensure sentinel element is zeroed
+            )
             self.model_params.kv_overrides = self._kv_overrides_array
 
         self.n_batch = min(n_ctx, n_batch)  # ???
@@ -441,9 +441,9 @@ class Llama:
 
         self.chat_format = chat_format
         self.chat_handler = chat_handler
-        self._chat_handlers: Dict[
-            str, llama_chat_format.LlamaChatCompletionHandler
-        ] = {}
+        self._chat_handlers: Dict[str, llama_chat_format.LlamaChatCompletionHandler] = (
+            {}
+        )
 
         self.draft_model = draft_model
 
@@ -932,7 +932,8 @@ class Llama:
 
                 sample_idx += 1
                 if stopping_criteria is not None and stopping_criteria(
-                    self._input_ids[: sample_idx], self._scores[sample_idx - self.n_tokens, :]
+                    self._input_ids[:sample_idx],
+                    self._scores[sample_idx - self.n_tokens, :],
                 ):
                     return
                 tokens_or_none = yield token
@@ -1155,9 +1156,9 @@ class Llama:
         bos_token_id: int = self.token_bos()
         cls_token_id: int = self._model.token_cls()
         sep_token_id: int = self._model.token_sep()
-        prefix_token_id: int = 0 # self._model.token_prefix() # TODO: Fix
-        middle_token_id: int = 0 # self._model.token_middle() # TODO: Fix
-        suffix_token_id: int = 0 # self._model.token_suffix() # TODO: Fix
+        prefix_token_id: int = 0  # self._model.token_prefix() # TODO: Fix
+        middle_token_id: int = 0  # self._model.token_middle() # TODO: Fix
+        suffix_token_id: int = 0  # self._model.token_suffix() # TODO: Fix
         add_space_prefix: bool = (
             self.metadata.get("tokenizer.ggml.add_space_prefix", "true") == "true"
         )
@@ -1313,7 +1314,7 @@ class Llama:
         if seed is not None:
             self.set_seed(seed)
         else:
-            self.set_seed(random.Random(self._seed).randint(0, 2 ** 32))
+            self.set_seed(random.Random(self._seed).randint(0, 2**32))
 
         finish_reason = "length"
         multibyte_fix = 0
@@ -2314,7 +2315,11 @@ class Llama:
         if additional_files:
             for additonal_file_name in additional_files:
                 # find the additional shard file:
-                matching_additional_files = [file for file in file_list if fnmatch.fnmatch(file, additonal_file_name)]
+                matching_additional_files = [
+                    file
+                    for file in file_list
+                    if fnmatch.fnmatch(file, additonal_file_name)
+                ]
 
                 if len(matching_additional_files) == 0:
                     raise ValueError(
