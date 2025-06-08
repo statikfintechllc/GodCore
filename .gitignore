@@ -22,16 +22,12 @@ frontend/build/
 *.log
 
 # Model files
-models/Mistral-13B-Instruct/*.gguf
-models/Mistral-13B-Instruct/*.bin
-models/Mistral-13B-Instruct/*.pth
-models/Mistral-13B-Instruct/*.safetensors
-models/Mistral-13B-Instruct/*.ckpt
 models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 
 # Model folders (optional, to skip *all* models/)
 models/
 !models/.gitkeep
+!models/Mistral-13B-Instruct/.gitkeep
 
 # Ignore frontend build output
 frontend/build/
