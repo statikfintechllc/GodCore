@@ -41,13 +41,15 @@ if ! conda info --envs | grep -q "$ENV_NAME"; then
     pip install -r requirements.txt
 fi
 
-cd /home/statiksmoke8/godcore/frontend
+cd .. && cd frontend
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate runmistral
 npm install
 pip uninstall llama-cpp-python -y && CMAKE_ARGS="-DLLAMA_CUBLAS=on -DLLAMA_CUDA_FORCE_MMQ=on" pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir
 python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()} - device count: {torch.cuda.device_count()}")'
+sudo apt update && sudo apt install nvidia-cuda-toolkit
 conda deactivate
+
 
 echo "[*] Verifying CUDA and GPU support..."
 python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()}"); print(f"TORCH device count: {torch.cuda.device_count()}")'
