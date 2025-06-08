@@ -64,6 +64,10 @@ cd environment && ./install.sh
 
 # 4. Activate the environment
 conda activate runmistral
+cd /home/statiksmoke8/godcore/frontend
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate runmistral
+npm install
 ```
 
 ## **Start the Full Stack**
