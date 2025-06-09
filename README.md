@@ -45,8 +45,6 @@ godcore/
 
 ```
 
----
-
 ## **Install & Setup**
 
 ```bash
