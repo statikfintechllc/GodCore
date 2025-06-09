@@ -13,6 +13,7 @@ body, html, #root {
   flex-direction: column;
 }
 .header {
+  justify-content: center;
   display: flex;
   flex-direction: column;
   align-items: center;
