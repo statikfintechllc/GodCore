@@ -39,12 +39,10 @@ godcore/
 ├── llama-cpp-python/        
 │       └── ...           # All llama-cpp-python files and folders here
 │
-├── models/
-│       └── Mistral-13B-Instruct/
-│                  └── mistral-13b-instruct-v0.1.Q5_K_M.gguf  # Need to download
-│
-└── tests/
-      └── test_api.py
+└── models/
+        └── Mistral-13B-Instruct/
+                  └── mistral-13b-instruct-v0.1.Q5_K_M.gguf  # Need to download
+
 ```
 
 ---
