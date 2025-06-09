@@ -16,14 +16,15 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
-</div>
 
 # GodCore Llama Mistral-13B Demo
 
+</div>
+
 **Local LLM (llama.cpp) with Mistral-13B model**
-- FastAPI backend (OpenAI-compatible route: `/v1/chat/completions`)
-- Custom React dashboard (full-feature, modern UI)
-- All-in-one repo, fully wired and ready
+> FastAPI backend (OpenAI-compatible route: `/v1/chat/completions`)
+> Custom React dashboard (full-feature, modern UI)
+> All-in-one repo, fully wired and ready
 
 ---
 
