@@ -20,6 +20,7 @@ fi
 
 # --- REMOVE ALL SYSTEM CUDA TOOLKIT (APT) ---
 echo "[*] Removing ALL system CUDA from apt (if any present, may take 2 min)..."
+
 sudo apt-get remove --purge -y '^cuda.*' nvidia-cuda-toolkit nvidia-cuda-dev || true
 sudo apt-get autoremove -y
 sudo apt-get update
@@ -66,9 +67,11 @@ cd ../llama-cpp-python
 
 if [ -f pyproject.toml ]; then
     echo "[*] Uninstalling previous llama-cpp-python wheel (if any)..."
+    
     pip uninstall llama-cpp-python -y || true
 
     rm -rf build/ dist/ llama_cpp_python.egg-info/
+
     export CUDA_HOME=/usr/local/cuda-12.4
     export PATH=/usr/local/cuda-12.4/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
@@ -84,11 +87,13 @@ else
 fi
 
 cd ../frontend
+
 npm install
 
-
 conda install -c conda-forge gxx -y # installs latest GCC toolchain (may be called gxx_linux-64)
+
 conda install -c conda-forge libstdcxx-ng=13.2.0 -y
+
 conda install -c conda-forge gcc=13.2.0 gxx=13.2.0 -y
 
 # Remove any broken conda libstdc++ copy (will re-link)
@@ -99,6 +104,8 @@ ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 $CONDA_PREFIX/lib/libstdc++.so.6
 
 # Confirm link
 ls -l $CONDA_PREFIX/lib/libstdc++.so.6
+
+pip install pyngrok fastapi uvicorn
 
 conda deactivate
 

@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
+import argparse
 
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
@@ -110,5 +111,10 @@ def chat_completion(request: ChatRequest):
 
 
 if __name__ == "__main__":
-    print("🚀 Devin-compatible API ready on http://localhost:8000")
-    uvicorn.run("run_llama:app", host="0.0.0.0", port=8000)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=8000, help="Port to run server on")
+    args = parser.parse_args()
+
+    print(f"🚀 Devin-compatible API ready on http://localhost:{args.port}")
+    uvicorn.run("run_llama:app", host="0.0.0.0", port=args.port)
+
