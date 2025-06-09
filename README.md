@@ -41,7 +41,7 @@ godcore/
 │
 └── models/
         └── Mistral-13B-Instruct/
-                  └── mistral-13b-instruct-v0.1.Q5_K_M.gguf  # Need to download
+                  └── mistral-13b-instruct-v0.1.Q5_K_M.gguf  # Is downloaded by install.sh to GodCore/environment/
 
 ```
 
@@ -49,24 +49,25 @@ godcore/
 
 ```bash
 # 1. Clone and get in
-git clone https://github.com/statikfintechllc/godcore.git && \
-cd godcore
+git clone https://github.com/statikfintechllc/GodCore.git && \
+cd GodCore
 
 # 2. Install all dependencies and set up environment
 cd environment && ./install.sh
 
 # 3. After install.sh runs place your downloaded model file here:
-#    godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
+#    /path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 
 # 4. Activate the environment
 conda activate runmistral
-cd /home/statiksmoke8/godcore/frontend
+cd frontend/
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate runmistral
 npm install
 ```
 
-**Inside run_llama.py Change this to match your system:**
+*Inside run_llama.py Change this to match your system:*
+
 ```bash
 MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
 ```
@@ -83,6 +84,7 @@ cd godcore && ./start_all.sh
 ```
 
 ## **Manual Start** *(Advanced/Debug)*
+> *Soon debunk, and bug free*
 
 > Start backend only:
 
@@ -108,10 +110,13 @@ npm start     # (Frontend live at http://localhost:3000)
 - See frontend/src/App.js for example usage.
 
 2. Model Download
-- Download the GGUF file for Mistral-13B-Instruct (e.g. Q5_K_M) from TheBloke on HuggingFace downloads to GodCore/environment.
+- Downloaded by install.sh is Mistral-13B-Instruct (e.g. Q5_K_M) from TheBloke on HuggingFace, to GodCore/environment.
 
-3. Place in:
-- godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
+3. Place the model file in:
+
+```bash
+/path/to/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
+```
 
 ---
 
