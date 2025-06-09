@@ -25,11 +25,11 @@ app.add_middleware(
 
 # --- Model Config ---
 MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
-TENSOR_SPLIT = "20,20"
+TENSOR_SPLIT = "18,18"
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=35,  # FULL offload for 13B, always use all available
+    n_gpu_layers=33,  # FULL offload for 13B, always use all available
     main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
     TENSOR_SPLIT=[
         0.5,
