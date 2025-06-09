@@ -170,3 +170,15 @@ npm start     # (Frontend live at http://localhost:3000)
 
 ---
 
+<h1 align="center">AscendAI Traffic</h1>
+<div align="center">
+  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png">
+  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png" alt="Traffic Graph" />
+  </a>
+</div>
+  
+<div align="center">
+  <em>
+Reset: After 7:00pm CST on First 2 Clones
+  </em>
+</div>
