@@ -43,7 +43,7 @@ echo "[*] CUDA version:"
 nvcc --version
 
 # --- Download Mistral-13B Model if missing ---
-MODEL_DIR="../models/Mistral-13B-Instruct"
+MODEL_DIR="/path/to/GodCore/models/Mistral-13B-Instruct"
 MODEL_PATH="$MODEL_DIR/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 MODEL_URL="https://huggingface.co/TheBloke/Mistral-13B-Instruct-v0.1-GGUF/resolve/main/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 
