@@ -4,14 +4,45 @@ set -e
 
 ENV_NAME="runmistral"
 
-echo "\n[*] Checking if conda env exists..."
-if conda info --envs | grep -q "$ENV_NAME"; then
-    echo "[*] Removing existing $ENV_NAME environment..."
-    conda remove -y --name $ENV_NAME --all
+echo "\n[*] Checking if conda env '$ENV_NAME' exists..."
+if conda info --envs | grep -q "^$ENV_NAME\s"; then
+    echo "[*] Conda env '$ENV_NAME' already exists. Activating and upgrading packages..."
+    source ~/miniconda3/etc/profile.d/conda.sh
+    conda activate $ENV_NAME
+    pip install --upgrade pip setuptools wheel
+    pip install -r requirements.txt
+else
+    echo "[*] Conda env '$ENV_NAME' not found. Creating from conda_env.yml..."
+    conda env create -f conda_env.yml
+    source ~/miniconda3/etc/profile.d/conda.sh
+    conda activate $ENV_NAME
 fi
 
+# --- REMOVE ALL SYSTEM CUDA TOOLKIT (APT) ---
+echo "[*] Removing ALL system CUDA from apt (if any present, may take 2 min)..."
+sudo apt-get remove --purge -y '^cuda.*' nvidia-cuda-toolkit nvidia-cuda-dev || true
+sudo apt-get autoremove -y
+sudo apt-get update
+
+# --- REQUIRED SYSTEM LIBS ---
+echo "[*] Installing build-essential and python3-dev..."
+sudo apt-get install -y build-essential python3-dev
+
+# --- ENSURE CUDA TOOLKIT IS PRESENT ---
+if [ ! -x /usr/local/cuda-12.4/bin/nvcc ]; then
+    echo "[ERROR] /usr/local/cuda-12.4/bin/nvcc not found! Install official NVIDIA CUDA 12.4 toolkit first!"
+    exit 99
+fi
+
+export CUDA_HOME=/usr/local/cuda-12.4
+export PATH=/usr/local/cuda-12.4/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
+
+echo "[*] CUDA version:"
+nvcc --version
+
 # --- Download Mistral-13B Model if missing ---
-MODEL_DIR="models/Mistral-13B-Instruct"
+MODEL_DIR="../models/Mistral-13B-Instruct"
 MODEL_PATH="$MODEL_DIR/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 MODEL_URL="https://huggingface.co/TheBloke/Mistral-13B-Instruct-v0.1-GGUF/resolve/main/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 
@@ -25,36 +56,37 @@ else
     echo "[*] Model already exists at $MODEL_PATH"
 fi
 
-echo "[*] Creating new $ENV_NAME environment from conda_env.yml..."
-conda env create -f conda_env.yml
+# --- Install/Upgrade GPU PyTorch stack (PIP ONLY) ---
+pip install torch==2.2.2+cu121 torchvision==0.17.2+cu121 torchaudio==2.2.2+cu121 --index-url https://download.pytorch.org/whl/cu121
 
-echo "[*] Activating $ENV_NAME..."
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate $ENV_NAME
+# --- Build llama-cpp-python from local source with GGML_CUDA+LLaVA ---
+cd ../llama-cpp-python
 
-# Optional: fallback to requirements.txt (shouldn't be needed unless pip-only install)
-if ! conda info --envs | grep -q "$ENV_NAME"; then
-    echo "[!] Conda env creation failed, falling back to pip install..."
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install --upgrade pip
-    pip install -r requirements.txt
+[ ! -f README.md ] && touch README.md
+
+if [ -f pyproject.toml ]; then
+    echo "[*] Uninstalling previous llama-cpp-python wheel (if any)..."
+    pip uninstall llama-cpp-python -y || true
+
+    rm -rf build/ dist/ llama_cpp_python.egg-info/
+    export CUDA_HOME=/usr/local/cuda-12.4
+    export PATH=/usr/local/cuda-12.4/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
+
+    echo "[*] Building llama-cpp-python with GGML_CUDA=on..."
+    CMAKE_ARGS="-DGGML_CUDA=on -DLLAVA_BUILD=on -DCMAKE_CUDA_ARCHITECTURES=86" pip install . --force-reinstall --no-cache-dir
+
+    echo "[*] Wheel built, testing system info:"
+    python -c "from llama_cpp import llama_print_system_info; llama_print_system_info()"
+else
+    echo "[ERROR] No pyproject.toml in $(pwd). Are you in the llama-cpp-python source directory?"
+    exit 1
 fi
 
-cd .. && cd frontend
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate runmistral
+cd ../frontend
 npm install
-pip uninstall llama-cpp-python -y         
-CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir
-python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()} - device count: {torch.cuda.device_count()}")'
-sudo apt update && sudo apt install nvidia-cuda-toolkit
-pip install torch==2.2.2+cu121 torchvision==0.17.2+cu121 torchaudio==2.2.2+cu121 --index-url https://download.pytorch.org/whl/cu121
+
 conda deactivate
-
-
-echo "[*] Verifying CUDA and GPU support..."
-python -c 'import torch; print(f"TORCH CUDA available: {torch.cuda.is_available()}"); print(f"TORCH device count: {torch.cuda.device_count()}")'
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"
 

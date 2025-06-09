@@ -110,5 +110,5 @@ def chat_completion(request: ChatRequest):
 
 
 if __name__ == "__main__":
-    print("🚀 Devin-compatible API ready on http://localhost:8000")
-    uvicorn.run("run_llama:app", host="0.0.0.0", port=8000)
+    print("🚀 Devin-compatible API ready on http://localhost:9973")
+    uvicorn.run("run_llama:app", host="0.0.0.0", port=9973)

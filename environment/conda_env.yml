@@ -3,45 +3,28 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=3.9
+  - python=3.10
   - pip
   - pip:
-      - llama-cpp-python==0.3.8
-      - fastapi==0.115.1
-      - uvicorn==0.34.2
-      - streamlit==1.35.0
-      - gradio==4.16.0
-      - requests==2.32.3
-      - numpy==1.26.4
-      - torch==2.1.2
-      - torchvision==0.16.2
-      - huggingface-hub==0.30.2
-      - sentencepiece==0.1.99
-      - rich>=13.0.0,<14.0.0
-      - pydantic==2.11.4
-      - python-multipart==0.0.20
-      - orjson==3.10.18
-      - tqdm==4.67.1
-      - matplotlib==3.10.1
-      - pandas==2.2.3
-      - scikit-learn==1.2.2
-      - scipy==1.15.2
-      - safetensors==0.5.3
-      - bitsandbytes==0.45.5
-      - accelerate==0.21.0
-      # CUDA 12 libs (if not system-wide, force here; optional)
-      - nvidia-cublas-cu12
-      - nvidia-cuda-cupti-cu12
-      - nvidia-cuda-nvrtc-cu12
-      - nvidia-cuda-runtime-cu12
-      - nvidia-cudnn-cu12
-      - nvidia-cufft-cu12
-      - nvidia-cufile-cu12
-      - nvidia-curand-cu12
-      - nvidia-cusolver-cu12
-      - nvidia-cusparse-cu12
-      - nvidia-cusparselt-cu12
-      - nvidia-nccl-cu12
-      - nvidia-nvjitlink-cu12
-      - nvidia-nvtx-cu12
+      - llama-cpp-python
+      - fastapi
+      - uvicorn
+      - streamlit
+      - gradio
+      - requests
+      - numpy
+      - huggingface-hub
+      - sentencepiece
+      - rich
+      - pydantic
+      - python-multipart
+      - orjson
+      - tqdm
+      - matplotlib
+      - pandas
+      - scikit-learn
+      - scipy
+      - safetensors
+      - bitsandbytes
+      - accelerate
 
