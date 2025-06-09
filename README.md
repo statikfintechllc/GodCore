@@ -117,7 +117,7 @@ npm start     # (Frontend live at http://localhost:3000)
 ## **Stop All Services**
 
 ```bash
-zsh stop_all.sh
+./stop_all.sh
 # (Kills backend and frontend processes)
 ```
 
