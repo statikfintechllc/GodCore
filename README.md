@@ -1,3 +1,23 @@
+<link rel="stylesheet" type="text/css" href="docs/custom.css">
+<div align="center">
+  <a
+href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/Open%20Use-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Fair Use License"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/GodCore%20v.0.1.0-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT License"/>
+  </a>
+</div>
+<div align="center">
+  <a
+href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
+    <img src="https://img.shields.io/badge/See-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Why"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
+    <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
+  </a>
+</div>
+
 # GodCore Llama Mistral-13B Demo
 
 **Local LLM (llama.cpp) with Mistral-13B model**
