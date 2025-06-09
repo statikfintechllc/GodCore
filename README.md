@@ -13,6 +13,7 @@
 godcore/
 ├── README.md
 ├── LICENSE
+├── run_llama.py
 ├── start_all.sh
 ├── stop_all.sh
 │
