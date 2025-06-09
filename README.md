@@ -33,7 +33,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 - **Llava wheel upgrade (June 2025):**  
   Recent update to Llava introduced a new Python wheel that breaks old installs.  
   **Solution:** See [llama-cpp-python/README.md#installation] for correct wheel and pip flags.  
-  _If you get errors about incompatible architecture or missing symbols, re-install with the new wheel instructions._
+  _If you get errors about incompatible architecture or missing symbols, re-install with the new wheel instructions. My install.sh builds clean Cuda Wheel every time if you remove your old runmistral environment._
 
 - **General advice:**  
   - Always check Python version compatibility (see `environment/conda_env.yml`).
