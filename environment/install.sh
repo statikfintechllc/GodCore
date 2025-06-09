@@ -107,6 +107,8 @@ ls -l $CONDA_PREFIX/lib/libstdc++.so.6
 
 pip install pyngrok fastapi uvicorn
 
+sudo apt install qrencode
+
 conda deactivate
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"
