@@ -35,10 +35,11 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   **Solution:** See [llama-cpp-python/README.md#installation] for correct wheel and pip flags.  
   _If you get errors about incompatible architecture or missing symbols, re-install with the new wheel instructions. My install.sh builds clean Cuda Wheel every time if you remove your old runmistral environment._
 
-- **General advice:**  
+- **General advice:**
+- I built this to fully install amd build proper the furst try, you can use this soley for a gpu llama wheel build by adjusting the environment name in the .yml file in GodCore/environment.
   - Always check Python version compatibility (see `environment/conda_env.yml`).
   - If you run into dependency issues, try a clean install (`conda remove --all`, then fresh `install.sh`).
-  - Report any new issues in [GitHub Issues](https://github.com/statikfintechllc/GodCore/issues) and check for updates here.
+  - Report any new issues in [GitHub Issues](https://github.com/statikfintechllc/GodCore/issues).
 
 ---
 
