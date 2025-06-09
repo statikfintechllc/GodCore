@@ -86,6 +86,20 @@ fi
 cd ../frontend
 npm install
 
+
+conda install -c conda-forge gxx -y # installs latest GCC toolchain (may be called gxx_linux-64)
+conda install -c conda-forge libstdcxx-ng=13.2.0 -y
+conda install -c conda-forge gcc=13.2.0 gxx=13.2.0 -y
+
+# Remove any broken conda libstdc++ copy (will re-link)
+rm -f $CONDA_PREFIX/lib/libstdc++.so.*
+
+# Link system libstdc++.so.6 into the env
+ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 $CONDA_PREFIX/lib/libstdc++.so.6
+
+# Confirm link
+ls -l $CONDA_PREFIX/lib/libstdc++.so.6
+
 conda deactivate
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"

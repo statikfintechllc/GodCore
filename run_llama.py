@@ -30,7 +30,7 @@ llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
     n_gpu_layers=35,  # FULL offload for 13B, always use all available
-    main_gpu=1,  # 0 = first GPU, you can set this to 1 if desired
+    main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
     TENSOR_SPLIT=[
         0.5,
         0.5,
@@ -110,5 +110,5 @@ def chat_completion(request: ChatRequest):
 
 
 if __name__ == "__main__":
-    print("🚀 Devin-compatible API ready on http://localhost:9973")
-    uvicorn.run("run_llama:app", host="0.0.0.0", port=9973)
+    print("🚀 Devin-compatible API ready on http://localhost:8000")
+    uvicorn.run("run_llama:app", host="0.0.0.0", port=8000)
