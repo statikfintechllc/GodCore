@@ -1,76 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import "./App.css";
+
+// Import your logos (ensure these paths are correct)
+import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
+import BgImage from "./Icon_Logo/Background_Image_For_App.png";
 
 function App() {
-  const [prompt, setPrompt] = useState("");
-  const [response, setResponse] = useState("");
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  async function sendPrompt() {
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+    const newUserMsg = { role: "user", content: input };
+    setMessages((prev) => [...prev, newUserMsg]);
+    setInput("");
     setLoading(true);
-    setError("");
-    setResponse("");
-    setCopied(false);
+
     try {
-      const r = await fetch("http://localhost:8000/v1/chat/completions", {
+      const res = await fetch("http://localhost:8000/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "mistral",
+          model: "mistral-13b-instruct",
           messages: [
-            { role: "user", content: prompt }
-          ]
+            ...messages,
+            newUserMsg,
+          ],
         }),
       });
-      if (!r.ok) {
-        throw new Error(`Server returned ${r.status}`);
-      }
-      const data = await r.json();
-      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-        setResponse(data.choices[0].message.content.trim());
-      } else if (data.error) {
-        setError("API error: " + (data.detail || data.error));
+      const data = await res.json();
+      if (data.choices && data.choices[0]?.message?.content) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.choices[0].message.content },
+        ]);
       } else {
-        setError("Unknown API response format.");
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "API error: No response from backend." },
+        ]);
       }
     } catch (err) {
-      setError("API error: " + err.message);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "API error: " + err.message },
+      ]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
-
-  function handleCopy() {
-    navigator.clipboard.writeText(response);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1000);
-  }
+  };
 
   return (
-    <div className="root">
-      <div className="card">
-        <h1>Mistral-13B <span className="sub">llama.cpp</span> Chat UI</h1>
-        <textarea
-          rows={4}
-          className="prompt"
-          placeholder="Type your prompt here..."
-          value={prompt}
-          onChange={e => setPrompt(e.target.value)}
-        />
-        <button className="send" onClick={sendPrompt} disabled={loading || !prompt.trim()}>
-          {loading ? "Processing..." : "Send"}
-        </button>
-        {error && <div className="error">{error}</div>}
-        {response && (
-          <div className="result">
-            <pre>{response}</pre>
-            <button className="copy" onClick={handleCopy}>{copied ? "Copied!" : "Copy"}</button>
-          </div>
-        )}
+    <div className="app-bg" style={{ backgroundImage: `url(${BgImage})` }}>
+      <div className="header">
+        <img src={AppIcon} alt="App Logo" className="app-logo" />
+        <span className="main-title">
+          GodCore-The Experiment, yet{" "}
+          <span className="smart-red-shadow">Smart</span>
+        </span>
       </div>
-      <footer>
-        <span>Powered by Mistral-13B | <a href="https://github.com/statikfintechllc" target="_blank" rel="noopener noreferrer">Statik DK Smoke</a></span>
-      </footer>
+      <div className="chat-history">
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`chat-bubble ${msg.role === "user" ? "user-bubble" : "ai-bubble"}`}
+          >
+            <span>{msg.content}</span>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <form className="chat-input-form" onSubmit={handleSend}>
+        <input
+          className="chat-input"
+          type="text"
+          value={input}
+          disabled={loading}
+          placeholder={loading ? "Waiting for response..." : "Type your message..."}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button className="chat-send-btn" type="submit" disabled={loading || !input.trim()}>
+          {loading ? "..." : "Send"}
+        </button>
+      </form>
     </div>
   );
 }

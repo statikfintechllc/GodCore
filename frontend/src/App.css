@@ -5,103 +5,118 @@ body, html, #root {
   margin: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
-.root {
+.app-bg {
   min-height: 100vh;
+  background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
+}
+.header {
+  display: flex;
+  align-items: center;
+  padding: 18px 32px 10px 32px;
+  background: rgba(24,24,24,0.96);
+  border-bottom: 2px solid #161616;
+  box-shadow: 0 2px 12px #2228;
+}
+.app-logo {
+  width: 54px;
+  height: 54px;
+  margin-right: 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px #0005;
+  background: #111;
+}
+.main-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 2rem;
+  letter-spacing: 0.03em;
+}
+.smart-red-shadow {
+  color: #f00;
+  text-shadow: 2px 2px 4px #000, 0 1px 0 #111, 0 0 6px #111;
+  font-weight: 700;
+  font-size: 2.2rem;
+  vertical-align: middle;
+  margin-left: 0.25em;
+}
+.chat-history {
+  flex: 1 1 auto;
+  padding: 28px 0 18px 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.chat-bubble {
+  padding: 12px 18px;
+  border-radius: 20px;
+  margin-bottom: 4px;
+  font-size: 1.14rem;
+  max-width: 75%;
+  word-break: break-word;
+  line-height: 1.4;
+  box-shadow: 0 2px 14px #0002;
+}
+.user-bubble {
+  align-self: flex-end;
+  background: linear-gradient(90deg, #242c38 60%, #323d4c 100%);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.ai-bubble {
+  align-self: flex-start;
+  background: linear-gradient(90deg, #23201d 50%, #21181a 100%);
+  color: #ffc9cb;
+  border-bottom-left-radius: 5px;
+}
+.chat-input-form {
+  display: flex;
   justify-content: center;
   align-items: center;
+  background: #151515eb;
+  border-top: 2px solid #232323;
+  padding: 12px 0;
 }
-.card {
-  background: #23232b;
-  padding: 2rem 2.5rem;
-  border-radius: 18px;
-  box-shadow: 0 6px 32px #0006;
-  margin-top: 5vh;
-  min-width: 340px;
-  max-width: 90vw;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-h1 {
-  margin-top: 0;
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: 0.01em;
-}
-.sub {
-  font-size: 1.1rem;
-  color: #f04;
-  letter-spacing: 0.1em;
-}
-.prompt {
-  font-size: 1.06rem;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  border: 1px solid #38384d;
-  border-radius: 10px;
-  background: #23232b;
-  color: #f3f3f3;
-  resize: vertical;
-}
-.send {
-  padding: 0.6rem 1.2rem;
-  background: #2d80e7;
+.chat-input {
+  flex: 1;
+  font-size: 1.12rem;
+  border-radius: 12px;
+  border: 1.5px solid #313131;
+  padding: 10px 14px;
+  background: #222;
   color: #fff;
-  border: none;
-  border-radius: 9px;
-  font-size: 1.08rem;
-  font-weight: 600;
-  box-shadow: 0 2px 12px #0058 0px;
-  cursor: pointer;
-  margin-bottom: 0.8rem;
-  transition: background 0.15s;
+  outline: none;
+  margin-right: 12px;
+  max-width: 600px;
+  box-shadow: 0 1px 8px #0003 inset;
 }
-.send:disabled {
-  opacity: 0.7;
-  background: #5a5a5a;
+.chat-send-btn {
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #ff6161 80%, #a90000 100%);
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.09rem;
+  box-shadow: 0 1px 7px #fa000042;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.chat-send-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
-.result {
-  background: #131318;
-  border-radius: 10px;
-  margin-top: 1.2rem;
-  padding: 1rem;
-  word-break: break-word;
-  position: relative;
+::-webkit-scrollbar {
+  width: 9px;
+  background: #202020;
 }
-.copy {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.96rem;
-  background: #2d80e7;
-  color: #fff;
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 12px;
 }
-.error {
-  color: #fff0f0;
-  background: #af2137;
-  border-radius: 8px;
-  padding: 0.7rem 1.1rem;
-  margin: 1rem 0 0.5rem 0;
-}
-footer {
-  margin-top: 6vh;
-  text-align: center;
-  font-size: 0.97rem;
-  color: #bbb;
-  letter-spacing: 0.02em;
-  opacity: 0.92;
-}
-footer a {
-  color: #2d80e7;
-  text-decoration: none;
-}
-footer a:hover {
-  text-decoration: underline;
-}
+
