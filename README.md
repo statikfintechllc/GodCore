@@ -18,7 +18,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   </a>
 
 # GodCore Llama Mistral-13B Demo
-
+*v.0.2.0 will be revamped with ngrok for portability*
 </div>
 
 **Local LLM (llama.cpp) with Mistral-13B model**
