@@ -14,6 +14,7 @@ body, html, #root {
 }
 .header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 18px 32px 10px 32px;
   background: rgba(24,24,24,0.96);
@@ -33,6 +34,8 @@ body, html, #root {
   font-weight: 600;
   font-size: 2rem;
   letter-spacing: 0.03em;
+  margin-top: 8px;
+  text-align: center;
 }
 .smart-red-shadow {
   color: #f00;
