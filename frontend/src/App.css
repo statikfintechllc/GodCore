@@ -6,11 +6,15 @@ body, html, #root {
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 .app-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
   background-size: cover;
   background-position: center;
-  display: flex;
   flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .header {
   justify-content: center;
