@@ -128,7 +128,20 @@ npm install   # (first time only)
 npm start     # (Frontend live at http://localhost:3000)
 ```
 
----
+## 📡 Remote Access (ngrok) Setup
+
+1. [Register for ngrok](https://ngrok.com/) and copy your **auth token** from your [dashboard](https://dashboard.ngrok.com/get-started/your-authtoken).
+2. On your system:
+    ```sh
+    ngrok config add-authtoken <YOUR_TOKEN_HERE>
+    ```
+3. Run the launch script:
+    ```sh
+    ./launch_ngrok-UI.sh
+    ```
+4. **Scan the QR code** shown in your terminal or **open the printed ngrok URL** in your phone’s browser.
+
+Your GremlinGPT UI is now instantly accessible from your phone or any remote device.
 
 ## **API Spec**
 1. POST /v1/chat/completions
