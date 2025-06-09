@@ -66,6 +66,11 @@ conda activate runmistral
 npm install
 ```
 
+**Inside run_llama.py Change this:**
+```bash
+MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
+```
+
 ## **Start the Full Stack**
 
 ```bash
