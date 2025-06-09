@@ -108,7 +108,7 @@ npm start     # (Frontend live at http://localhost:3000)
 - See frontend/src/App.js for example usage.
 
 2. Model Download
-- Download the GGUF file for Mistral-13B-Instruct (e.g. Q4 or Q5_K_M) from TheBloke on HuggingFace.
+- Download the GGUF file for Mistral-13B-Instruct (e.g. Q5_K_M) from TheBloke on HuggingFace downloads to GodCore/environment.
 
 3. Place in:
 - godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
