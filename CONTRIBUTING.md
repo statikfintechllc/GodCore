@@ -16,20 +16,18 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
-</div>
 
 # Contributing to GremlinGPT
 
-First off: thank you for being curious, weird, or skilled enough to want in.
+</div>
 
-This is not a normal project. This is GremlinGPT — a recursive AI orchestration system duct-taped to a freedom protocol running on vibes and terminal sweat.
+First off: thank you for being curious, weird, or skilled enough to want in.
 
 ## 🧠 Minimum Brain Requirements
 
 - You know Git. If not, go learn.
 - You don't cry when Python gives you nonsense tracebacks.
 - You treat the codebase like a living organism, not a sandbox.
-- You have read the [Founder's Manifesto](../FOUNDER_LOG.md). If you haven't, turn back.
 
 ## 🧩 How to Contribute
 
@@ -63,7 +61,6 @@ This is not a normal project. This is GremlinGPT — a recursive AI orchestratio
 
 We’re building a system that survives human chaos. Start by not being part of it.
 
-Follow the [Code of Conduct](CODE_OF_CONDUCT.md). If you can’t, fork off.
 
 ## 🪬 Final Words
 
