@@ -28,6 +28,24 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 
 ---
 
+## 🚨 Known Issues & Breaking Changes (Last Updated: 2025-06-09)
+
+- **Llava wheel upgrade (June 2025):**  
+  Recent update to Llava introduced a new Python wheel that breaks old installs.  
+  **Solution:** See [llama-cpp-python/README.md#installation] for correct wheel and pip flags.  
+  _If you get errors about incompatible architecture or missing symbols, re-install with the new wheel instructions._
+
+- **General advice:**  
+  - Always check Python version compatibility (see `environment/conda_env.yml`).
+  - If you run into dependency issues, try a clean install (`conda remove --all`, then fresh `install.sh`).
+  - Report any new issues in [GitHub Issues](https://github.com/statikfintechllc/GodCore/issues) and check for updates here.
+
+---
+
+> Documentation is updated frequently. If you see an issue, submit a PR or open an issue!
+
+---
+
 ## **Directory Layout**
 
 ```text
