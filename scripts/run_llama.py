@@ -10,12 +10,14 @@ import uvicorn
 import argparse
 import sys
 
+from scripts.ask_monday_handler import ask_monday  # <---- PATCHED: Import handler
+
 # Ensure PYTHONPATH is repo root regardless of current dir
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
+    
 os.environ['PYTHONPATH'] = REPO_ROOT
-
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
 os.environ["GGML_CUDA_FORCE_MMQ"] = "1"
@@ -33,24 +35,22 @@ app.add_middleware(
 )
 
 # --- Model Config ---
-MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
+MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"  # CHANGE ME
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=35,  # FULL offload for 13B, always use all available
-    main_gpu=1,  # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[16,19],  # Split evenly for two 3060s, adjust if VRAM is not matched
-    n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
+    n_gpu_layers=35,
+    main_gpu=1,         # 0 = first GPU, or 1 = second GPU
+    TENSOR_SPLIT=[16, 19],
+    n_threads=24,
     use_mmap=True,
     use_mlock=False,
     verbose=True,
 )
 
-
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     content: str
-
 
 class ChatRequest(BaseModel):
     model: str
@@ -60,24 +60,19 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = 16184
     stop: Optional[List[str]] = None
 
-
 @app.get("/")
 def root():
     return {
         "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
     }
 
-
 @app.post("/v1/chat/completions")
 def chat_completion(request: ChatRequest):
+    # Build prompt
     prompt = (
         "".join(
-            [
-                f"{msg.role.capitalize()}: {msg.content.strip()}\n"
-                for msg in request.messages
-            ]
-        )
-        + "Assistant:"
+            [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
+        ) + "Assistant:"
     )
     try:
         output = llm(
@@ -87,20 +82,32 @@ def chat_completion(request: ChatRequest):
             max_tokens=request.max_tokens,
             stop=request.stop or ["</s>", "User:", "Assistant:"],
         )
+        mistral_answer = output["choices"][0]["text"].strip()
     except Exception as e:
         return {"error": "InferenceFailure", "detail": str(e)}
+
+    # Try Ask Monday (ChatGPT) and fallback to Mistral
+    try:
+        monday_result = ask_monday(prompt)
+        chatgpt_answer = monday_result["response"]
+        if not chatgpt_answer.strip():
+            raise Exception("ChatGPT/Ask Monday blank response")
+        used_model = "chatgpt-monday"
+    except Exception as ex:
+        chatgpt_answer = mistral_answer
+        used_model = "mistral-fallback"
 
     return {
         "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",
         "object": "chat.completion",
         "created": int(time.time()),
-        "model": request.model,
+        "model": used_model,
         "choices": [
             {
                 "index": 0,
                 "message": {
                     "role": "assistant",
-                    "content": output["choices"][0]["text"].strip(),
+                    "content": chatgpt_answer,
                 },
                 "finish_reason": "stop",
             }
@@ -109,10 +116,9 @@ def chat_completion(request: ChatRequest):
             "prompt_tokens": output.get("prompt_tokens", 0),
             "completion_tokens": output.get("completion_tokens", 0),
             "total_tokens": output.get("prompt_tokens", 0)
-            + output.get("completion_tokens", 0),
+                             + output.get("completion_tokens", 0),
         },
     }
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -121,4 +127,3 @@ if __name__ == "__main__":
 
     print(f"🚀 Devin-compatible API ready on http://localhost:{args.port}")
     uvicorn.run("run_llama:app", host="0.0.0.0", port=args.port)
-
