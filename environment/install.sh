@@ -109,6 +109,8 @@ pip install pyngrok fastapi uvicorn
 
 sudo apt install qrencode
 
+npm install --save-dev cross-env
+
 conda deactivate
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"
