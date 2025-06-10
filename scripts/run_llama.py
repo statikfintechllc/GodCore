@@ -8,6 +8,13 @@ from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
 import argparse
+import sys
+
+# Ensure PYTHONPATH is repo root regardless of current dir
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+os.environ['PYTHONPATH'] = REPO_ROOT
 
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
