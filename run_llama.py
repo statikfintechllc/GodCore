@@ -26,16 +26,12 @@ app.add_middleware(
 
 # --- Model Config ---
 MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
-TENSOR_SPLIT = "18,20"
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
     n_gpu_layers=35,  # FULL offload for 13B, always use all available
-    main_gpu=1,  # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[
-        0.5,
-        0.5,
-    ],  # Split evenly for two 3060s, adjust if VRAM is not matched
+    main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
+    TENSOR_SPLIT=[0.5,0.5],  # Split evenly for two 3060s, adjust if VRAM is not matched
     n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,
@@ -53,7 +49,7 @@ class ChatRequest(BaseModel):
     messages: List[Message]
     temperature: Optional[float] = 0.7
     top_p: Optional[float] = 0.9
-    max_tokens: Optional[int] = 16384
+    max_tokens: Optional[int] = 32268
     stop: Optional[List[str]] = None
 
 
