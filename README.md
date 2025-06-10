@@ -35,7 +35,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 ## **Directory Layout**
 
 ```text
-godcore/
+GodCore/
 │
 ├── README.md
 ├── LICENSE
