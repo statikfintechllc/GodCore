@@ -159,7 +159,7 @@ Your GremlinGPT UI is now instantly accessible from your phone or any remote dev
 - Downloaded by install.sh is Mistral-13B-Instruct (e.g. Q5_K_M) from TheBloke on HuggingFace, to GodCore/environment.
 
 3. Place the model file in:
-
+> *install.sh does this for you, but checking is good*
 ```bash
 /path/to/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 ```
