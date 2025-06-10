@@ -37,7 +37,7 @@ start_frontend() {
     if [ ! -d node_modules ]; then
         npm install
     fi
-    nohup HOST=0.0.0.0 npm start > "$FRONTEND_LOG" 2>&1 &
+    nohup npm start > "$FRONTEND_LOG" 2>&1 &
     echo "[*] Frontend log: $FRONTEND_LOG"
 }
 
