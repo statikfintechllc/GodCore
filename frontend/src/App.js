@@ -2,7 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 // Allow backend URL override via environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const res = await fetch("/v1/chat/completions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    model: "mistral-13b-instruct",
+    messages: [
+      ...messages,
+      newUserMsg,
+    ],
+  }),
+});
 
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
