@@ -2,8 +2,8 @@ import os
 import time
 import uuid
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
@@ -22,6 +22,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
 )
 
 # --- Model Config ---
