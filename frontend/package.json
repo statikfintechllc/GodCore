@@ -9,9 +9,9 @@
   },
   "scripts": {
     "start": "cross-env HOST=0.0.0.0 react-scripts start",
-    "proxy": "http://localhost:8000"
     "build": "react-scripts build"
   },
+  "proxy": "http://localhost:8000",
   "browserslist": {
     "production": [
       ">0.2%",
