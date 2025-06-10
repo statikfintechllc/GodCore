@@ -4,12 +4,12 @@
   "private": true,
   "dependencies": {
     "react": "^18.3.0",
-    "cross-env":  "^7.0.3",
+    "cross-env": "^7.0.3",
     "react-dom": "^18.3.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "cross-env HOST=0.0.0.0 react-scripts start",
+    "start": "cross-env HOST=0.0.0.0 DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
     "build": "react-scripts build"
   },
   "proxy": "http://localhost:8000",

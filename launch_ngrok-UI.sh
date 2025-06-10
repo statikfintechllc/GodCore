@@ -40,6 +40,9 @@ start_backend() {
     echo "[*] Backend log: $BACKEND_LOG"
 }
 
+export DANGEROUSLY_DISABLE_HOST_CHECK=true
+export HOST=0.0.0.0
+
 # --- Function: Start Frontend (React) ---
 start_frontend() {
     echo "\n[*] Starting frontend (React) with public unlocks..."

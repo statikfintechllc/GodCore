@@ -7,6 +7,19 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
 
+from fastapi.middleware.cors import CORSMiddleware
+
+# Always allow both your local and any public ngrok origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],    # For production: use exact ngrok URL(s) and localhost, but '*' is easiest for testing
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,
+)
+
 function App() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
