@@ -18,7 +18,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   </a>
 
 # GodCore Llama Mistral-13B Demo
-*V.0.3.0 will be the bug removal and Perfecting the simple install.*
+*V.0.3.0 will be the bug removal and Perfecting the simple install, and ensuring that the UI properly adjusts framing for all devices where the UI is used.*
 </div>
 
 **Local LLM (llama.cpp) with Mistral-13B model**
