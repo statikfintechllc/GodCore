@@ -7,18 +7,17 @@ body, html, #root, .app-bg {
   font-family: 'Inter', Arial, sans-serif;
   width: 100vw;
 }
-
 .app-bg {
   min-height: 100vh;
   min-width: 100vw;
-  background: url('./Icon_Logo/Background_Image_For_App.png') center center / cover no-repeat fixed;
+  background: url('./Icon_Logo/Background_Image_For_App.png') center center / contain no-repeat fixed;
+  background-color: #18181a; /* fallback solid color, matches your theme */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   overflow-x: hidden;
 }
-
 .main-content {
   width: 100vw;
   min-height: 100vh;
