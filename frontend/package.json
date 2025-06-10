@@ -8,7 +8,7 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HOST=0.0.0.0 react-scripts start",
     "build": "react-scripts build"
   },
   "browserslist": {
