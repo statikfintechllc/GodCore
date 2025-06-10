@@ -1,10 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
-
-// Optionally allow backend URL override (not used in fetch below, but safe to keep)
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
-
-// Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
 
 function App() {
@@ -31,13 +26,9 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "mistral-13b-instruct",
-          messages: [
-            ...messages,
-            newUserMsg,
-          ],
+          messages: [...messages, newUserMsg],
         }),
       });
-
       const data = await res.json();
       if (data.choices && data.choices[0]?.message?.content) {
         setMessages((prev) => [
@@ -89,6 +80,7 @@ function App() {
             disabled={loading}
             placeholder={loading ? "Waiting for response..." : "Type your message..."}
             onChange={(e) => setInput(e.target.value)}
+            autoFocus
           />
           <button className="chat-send-btn" type="submit" disabled={loading || !input.trim()}>
             {loading ? "..." : "Send"}
@@ -100,4 +92,3 @@ function App() {
 }
 
 export default App;
-
