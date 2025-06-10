@@ -14,7 +14,7 @@ BACKEND_FILE="$BACKEND_DIR/run_llama.py"
 
 export LLAMA_CPP_FORCE_CUDA=1
 export GGML_CUDA_FORCE_MMQ=1
-export GGML_CUDA_PEER_ACCESS=0,1
+export GGML_CUDA_PEER_ACCESS=0
 
 # --- Function: Activate Conda and Env ---
 activate_conda() {
@@ -22,10 +22,10 @@ activate_conda() {
     conda activate $ENV_NAME || { echo '[FATAL] Could not activate env. Aborting.'; exit 1; }
 }
 
-# --- Get local IP for LAN ---
+# --- Function: Get Local IP Address ---
 get_local_ip() {
-    # This works for most Linux systems, falls back to 127.0.0.1 if fails
-    ip route get 1 | awk '{print $NF;exit}' 2>/dev/null || echo "127.0.0.1"
+    # Returns the first non-loopback IPv4 address
+    ip addr | awk '/inet / && $2 !~ /^127/ {split($2,a,"/"); print a[1]; exit}'
 }
 
 # --- Function: Start Backend (run_llama.py) ---
@@ -40,18 +40,14 @@ start_backend() {
     echo "[*] Backend log: $BACKEND_LOG"
 }
 
-export DANGEROUSLY_DISABLE_HOST_CHECK=true
-export HOST=0.0.0.0
-
 # --- Function: Start Frontend (React) ---
 start_frontend() {
-    echo "\n[*] Starting frontend (React) with public unlocks..."
+    echo "\n[*] Starting frontend (React)..."
     cd "$FRONTEND_DIR"
     if [ ! -d node_modules ]; then
         npm install
     fi
-    # Fix "Invalid Host header" by disabling host check for all public tunnels
-    nohup DANGEROUSLY_DISABLE_HOST_CHECK=true HOST=0.0.0.0 PORT=$FRONTEND_PORT npm start > "$FRONTEND_LOG" 2>&1 &
+    nohup npm start > "$FRONTEND_LOG" 2>&1 &
     echo "[*] Frontend log: $FRONTEND_LOG"
 }
 
@@ -63,11 +59,13 @@ start_backend
 sleep 5  # Allow backend time to spawn (if model is huge, increase this)
 start_frontend
 
-echo "\n[*] Both backend and frontend are starting up."
+# --- Print ALL Accessible URLs ---
 LOCAL_IP=$(get_local_ip)
-echo "    Backend: http://localhost:$BACKEND_PORT"
-echo "    Frontend (local): http://localhost:$FRONTEND_PORT"
-echo "    Frontend (LAN):   http://$LOCAL_IP:$FRONTEND_PORT"
+echo "\n[*] Both backend and frontend are starting up."
+echo "    Backend (localhost):    http://localhost:$BACKEND_PORT"
+echo "    Backend (LAN):         http://$LOCAL_IP:$BACKEND_PORT"
+echo "    Frontend (localhost):  http://localhost:$FRONTEND_PORT"
+echo "    Frontend (LAN):        http://$LOCAL_IP:$FRONTEND_PORT"
 echo "[*] To stop: pkill -f run_llama.py && pkill -f react-scripts"
 echo "[*] Tail logs: tail -f $BACKEND_LOG $FRONTEND_LOG"
 
@@ -91,7 +89,7 @@ if [ $success -eq 0 ]; then
 fi
 
 # --- ngrok Tunnel for Frontend ---
-echo "[*] Starting ngrok tunnel to frontend (http://localhost:$FRONTEND_PORT)..."
+echo "[*] Starting ngrok tunnel to frontend (http://$LOCAL_IP:$FRONTEND_PORT)..."
 
 activate_conda
 
@@ -112,20 +110,25 @@ if [[ -z "$NGROK_URL" ]]; then
 fi
 echo "[+] ngrok tunnel is live: $NGROK_URL"
 
-# --- QR Code ---
+# --- QR Code for ngrok (global access) ---
 if command -v qrencode > /dev/null; then
-    echo "\n[+] Scan this QR code with your phone to open the UI:"
+    echo "\n[+] Scan this QR code with your phone to open the UI (ANYWHERE):"
     echo "$NGROK_URL" | qrencode -t ansiutf8
+    echo "\n[+] Or open this URL on your phone: $NGROK_URL"
 else
     echo "[!] qrencode not installed. Install with: sudo apt install qrencode"
 fi
 
+# --- QR Code for local LAN access (home/office only) ---
+LAN_URL="http://$LOCAL_IP:$FRONTEND_PORT"
+if command -v qrencode > /dev/null; then
+    echo "\n[+] Scan this QR code with your phone to open the UI (LAN only):"
+    echo "$LAN_URL" | qrencode -t ansiutf8
+    echo "\n[+] Or open this URL on your phone: $LAN_URL"
+fi
 echo "\n[+] Open this URL on your phone to access the UI:"
 echo "$NGROK_URL"
-echo "[+] Local access:    http://localhost:$FRONTEND_PORT"
-echo "[+] Network access:  http://$LOCAL_IP:$FRONTEND_PORT"
 echo "\n[*] Done."
 
 # Clean up
 rm -f ngrok_url.txt
-
