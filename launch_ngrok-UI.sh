@@ -12,6 +12,10 @@ BACKEND_LOG="$BACKEND_DIR/run_llama.log"
 FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
 BACKEND_FILE="$BACKEND_DIR/run_llama.py"
 
+export LLAMA_CPP_FORCE_CUDA=1
+export GGML_CUDA_FORCE_MMQ=1
+export GGML_CUDA_PEER_ACCESS=0
+
 # --- Function: Activate Conda and Env ---
 activate_conda() {
     source ~/miniconda3/etc/profile.d/conda.sh || { echo '[FATAL] Could not source conda. Aborting.'; exit 1; }
