@@ -1,153 +1,152 @@
-/* ---- GodCore v.0.3.0 UI ---- */
-
+/* Reset and base */
 body, html, #root, .app-bg {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', Arial, sans-serif;
-  width: 100vw;
 }
+
 .app-bg {
   min-height: 100vh;
   min-width: 100vw;
-  background: url('./Icon_Logo/Background_Image_For_App.png') center center / contain no-repeat fixed;
-  background-color: #18181a; /* fallback solid color, matches your theme */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow-x: hidden;
-}
-.main-content {
-  width: 100vw;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  background: rgba(0,0,0,0.25);
-  padding-bottom: 60px;
+  background: url('./Icon_Logo/Background_Image_For_App.png') no-repeat center center fixed;
+  background-size: cover;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -1;
 }
 
-/* Header */
+/* Main content wrapper */
+.main-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Header styles */
 .header {
-  margin-top: 20px;
-  text-align: center;
   width: 100%;
-  z-index: 10;
+  padding-top: env(safe-area-inset-top, 20px);
+  padding-bottom: 8px;
   background: rgba(0,0,0,0.7);
-  padding: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .app-logo {
   width: 48px;
   height: 48px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
-/* Title styling */
 .main-title {
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.3rem;
   color: #fff;
-  letter-spacing: .03em;
-  text-shadow: 0 3px 15px #000;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -1px;
 }
 
 .smart-red-shadow {
-  color: #FF2323;
-  text-shadow: 0 1px 10px #000;
+  color: #ff2222;
+  text-shadow: 1px 1px 4px #000, 0 0 2px #fff;
+  font-weight: 900;
 }
 
-/* Chat History */
+/* Chat history area */
 .chat-history {
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto 0 auto;
+  flex: 1 1 auto;
+  width: 100vw;
+  max-width: 100vw;
+  padding: 8px 0 88px 0;
   overflow-y: auto;
-  padding: 20px 10px 10px 10px;
   box-sizing: border-box;
+  background: transparent;
+  scrollbar-width: thin;
 }
 
 .chat-bubble {
   max-width: 85vw;
-  padding: 12px 16px;
-  margin: 8px 0;
+  margin: 8px auto;
+  padding: 14px 18px;
   border-radius: 18px;
+  font-size: 1.1rem;
   word-break: break-word;
-  font-size: 1rem;
-  background: rgba(28,28,30,0.87);
-  color: #fff;
-  box-shadow: 0 2px 14px rgba(0,0,0,0.1);
+  line-height: 1.4;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  background: rgba(20,20,24,0.78);
+  color: #eee;
 }
 
 .user-bubble {
-  background: rgba(32, 64, 175, 0.87);
+  background: rgba(44,120,220,0.91);
   color: #fff;
   align-self: flex-end;
-  text-align: right;
-  margin-left: 20vw;
+  margin-right: 12vw;
 }
 
 .ai-bubble {
-  background: rgba(0,0,0,0.75);
-  color: #fff;
+  background: rgba(20,20,24,0.78);
+  color: #eee;
   align-self: flex-start;
-  text-align: left;
-  margin-right: 20vw;
+  margin-left: 12vw;
 }
 
-/* Chat input always pinned bottom */
+/* Fixed bottom input */
 .chat-input-form {
   position: fixed;
-  bottom: 0;
-  left: 0;
+  bottom: 0; left: 0;
   width: 100vw;
-  background: rgba(28, 28, 30, 0.95);
+  background: rgba(18,18,20,0.97);
   display: flex;
+  justify-content: center;
   align-items: center;
-  z-index: 999;
-  padding: 8px 4vw;
-  box-sizing: border-box;
-  border-top: 1px solid #222;
+  gap: 8px;
+  padding: 8px 8px calc(env(safe-area-inset-bottom,0px) + 8px) 8px;
+  z-index: 5;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.20);
 }
 
 .chat-input {
-  flex: 1;
+  flex: 1 1 auto;
   font-size: 1.1rem;
+  padding: 11px 14px;
+  border-radius: 8px;
   border: none;
   outline: none;
-  border-radius: 22px;
-  padding: 10px 18px;
   margin-right: 8px;
-  background: #18181b;
+  background: #26262a;
   color: #fff;
-  box-shadow: 0 0 8px #18181a22;
+  box-shadow: 0 1px 4px #0002;
 }
 
 .chat-send-btn {
-  background: #a80000;
+  padding: 11px 20px;
+  background: #d52b2b;
   color: #fff;
   border: none;
-  border-radius: 22px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  padding: 10px 22px;
+  border-radius: 7px;
+  font-size: 1.07rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.16s;
 }
-
 .chat-send-btn:disabled {
+  opacity: 0.6;
   background: #555;
   cursor: not-allowed;
 }
 
-/* Responsive for mobile */
+/* Mobile tweaks */
 @media (max-width: 600px) {
-  .main-title { font-size: 1.3rem; }
-  .chat-history { max-width: 98vw; padding: 7vw 2vw 20vw 2vw; }
-  .app-logo { width: 36px; height: 36px; }
-  .chat-input-form { padding: 5px 2vw; }
-  .chat-bubble { font-size: 0.96rem; }
+  .main-title { font-size: 1.45rem; }
+  .app-logo { width: 40px; height: 40px; }
+  .chat-bubble { font-size: 1.01rem; }
+  .chat-input { font-size: 1.01rem; }
 }
