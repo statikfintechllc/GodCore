@@ -23,7 +23,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
-    max_age=600,
 )
 
 # --- Model Config ---
@@ -31,9 +30,9 @@ MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=38,  # FULL offload for 13B, always use all available
+    n_gpu_layers=35,  # FULL offload for 13B, always use all available
     main_gpu=1,  # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[18,20],  # Split evenly for two 3060s, adjust if VRAM is not matched
+    TENSOR_SPLIT=[16,19],  # Split evenly for two 3060s, adjust if VRAM is not matched
     n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,

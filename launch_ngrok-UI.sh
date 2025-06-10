@@ -24,7 +24,6 @@ activate_conda() {
 
 # --- Function: Get Local IP Address ---
 get_local_ip() {
-    # Returns the first non-loopback IPv4 address
     ip addr | awk '/inet / && $2 !~ /^127/ {split($2,a,"/"); print a[1]; exit}'
 }
 
@@ -56,7 +55,7 @@ echo "\n[*] Launching Godcore Mistral Full Stack with ngrok (frontend tunnel)...
 
 activate_conda
 start_backend
-sleep 5  # Allow backend time to spawn (if model is huge, increase this)
+sleep 5
 start_frontend
 
 # --- Print ALL Accessible URLs ---
@@ -88,24 +87,29 @@ if [ $success -eq 0 ]; then
   exit 1
 fi
 
-# --- ngrok Tunnel for Frontend ---
+# --- Start ngrok in the background ---
 echo "[*] Starting ngrok tunnel to frontend (http://$LOCAL_IP:$FRONTEND_PORT)..."
 
-activate_conda
+# Kill any previous ngrok sessions just in case
+pkill -f "ngrok http $FRONTEND_PORT" || true
 
-python <<EOF > ngrok_url.txt
-from pyngrok import ngrok
-try:
-    tunnel = ngrok.connect($FRONTEND_PORT, "http", bind_tls=True)
-    print(tunnel.public_url)
-except Exception as e:
-    print(f"[NGROK ERROR] {e}")
-EOF
+# Launch ngrok in the background, writing logs to a temp file
+NGROK_LOG="/tmp/ngrok.log"
+ngrok http $FRONTEND_PORT --log=stdout > "$NGROK_LOG" 2>&1 &
 
-NGROK_URL=$(cat ngrok_url.txt | grep "https://" || true)
+# Wait for ngrok to start and print the public URL
+NGROK_URL=""
+for i in {1..20}; do
+  NGROK_URL=$(grep -oE "https://[a-zA-Z0-9.-]+\.ngrok-free\.app" "$NGROK_LOG" | head -n1)
+  if [[ -n "$NGROK_URL" ]]; then
+    break
+  fi
+  sleep 1
+done
+
 if [[ -z "$NGROK_URL" ]]; then
-    echo "[FATAL] ngrok did not return a valid URL. See above for errors."
-    cat ngrok_url.txt
+    echo "[FATAL] ngrok did not return a valid URL. See log below:"
+    tail -20 "$NGROK_LOG"
     exit 1
 fi
 echo "[+] ngrok tunnel is live: $NGROK_URL"
@@ -130,5 +134,5 @@ echo "\n[+] Open this URL on your phone to access the UI:"
 echo "$NGROK_URL"
 echo "\n[*] Done."
 
-# Clean up
-rm -f ngrok_url.txt
+# Optionally: Do not clean up $NGROK_LOG in case you want to review ngrok output
+
