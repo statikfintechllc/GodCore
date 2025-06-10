@@ -12,6 +12,12 @@ BACKEND_LOG="$BACKEND_DIR/run_llama.log"
 FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
 BACKEND_FILE="$BACKEND_DIR/run_llama.py"
 
+# --- Function: Activate Conda and Env ---
+activate_conda() {
+    source ~/miniconda3/etc/profile.d/conda.sh || { echo '[FATAL] Could not source conda. Aborting.'; exit 1; }
+    conda activate $ENV_NAME || { echo '[FATAL] Could not activate env. Aborting.'; exit 1; }
+}
+
 # --- Function: Start Backend (run_llama.py) ---
 start_backend() {
     echo "\n[*] Starting backend (run_llama.py)..."
@@ -20,12 +26,8 @@ start_backend() {
         echo "[FATAL] Backend file $BACKEND_FILE not found! Aborting." >&2
         exit 1
     fi
-    source ~/miniconda3/etc/profile.d/conda.sh || { echo '[FATAL] Could not source conda. Aborting.'; exit 1; }
-    conda activate $ENV_NAME || { echo '[FATAL] Could not activate env. Aborting.'; exit 1; }
-    # Make sure backend binds to 0.0.0.0 (edit your run_llama.py to use 0.0.0.0 as host)
     nohup python "$BACKEND_FILE" > "$BACKEND_LOG" 2>&1 &
     echo "[*] Backend log: $BACKEND_LOG"
-    sleep 8  # Wait for backend to load model
 }
 
 # --- Function: Start Frontend (React) ---
@@ -35,15 +37,16 @@ start_frontend() {
     if [ ! -d node_modules ]; then
         npm install
     fi
-    # Start on 0.0.0.0 for remote access
     nohup HOST=0.0.0.0 npm start > "$FRONTEND_LOG" 2>&1 &
     echo "[*] Frontend log: $FRONTEND_LOG"
 }
 
 # --- Main Execution ---
-echo "\n[*] Launching Godcore Mistral Full Stack..."
+echo "\n[*] Launching Godcore Mistral Full Stack with ngrok (frontend tunnel)..."
 
+activate_conda
 start_backend
+sleep 5  # Allow backend time to spawn (if model is huge, increase this)
 start_frontend
 
 echo "\n[*] Both backend and frontend are starting up."
@@ -52,20 +55,32 @@ echo "    Frontend: http://localhost:$FRONTEND_PORT"
 echo "[*] To stop: pkill -f run_llama.py && pkill -f react-scripts"
 echo "[*] Tail logs: tail -f $BACKEND_LOG $FRONTEND_LOG"
 
-# Wait for frontend to be ready
+# --- Wait for frontend to be ready ---
 echo "[*] Waiting for frontend to be ready on port $FRONTEND_PORT..."
+success=0
 for i in {1..30}; do
   if lsof -i:$FRONTEND_PORT | grep LISTEN; then
     echo "[+] Frontend running on port $FRONTEND_PORT"
+    success=1
     break
   fi
   sleep 1
 done
 
-# --- ngrok Tunnel ---
+if [ $success -eq 0 ]; then
+  echo "[FATAL] Frontend did not start on port $FRONTEND_PORT after 30 seconds!"
+  echo "==== Last 40 lines of frontend log ===="
+  tail -40 "$FRONTEND_LOG"
+  exit 1
+fi
+
+# --- ngrok Tunnel for Frontend ---
 echo "[*] Starting ngrok tunnel to frontend (http://localhost:$FRONTEND_PORT)..."
 
-python3 <<EOF > ngrok_url.txt
+# Activate conda for ngrok Python if necessary
+activate_conda
+
+python <<EOF > ngrok_url.txt
 from pyngrok import ngrok
 try:
     tunnel = ngrok.connect($FRONTEND_PORT, "http", bind_tls=True)
@@ -77,6 +92,7 @@ EOF
 NGROK_URL=$(cat ngrok_url.txt | grep "https://" || true)
 if [[ -z "$NGROK_URL" ]]; then
     echo "[FATAL] ngrok did not return a valid URL. See above for errors."
+    cat ngrok_url.txt
     exit 1
 fi
 echo "[+] ngrok tunnel is live: $NGROK_URL"
