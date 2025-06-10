@@ -1,18 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
-// Allow backend URL override via environment variable
-const res = await fetch("/v1/chat/completions", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    model: "mistral-13b-instruct",
-    messages: [
-      ...messages,
-      newUserMsg,
-    ],
-  }),
-});
+// Optionally allow backend URL override (not used in fetch below, but safe to keep)
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
@@ -37,7 +27,7 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/v1/chat/completions`, {
+      const res = await fetch("/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,6 +38,7 @@ function App() {
           ],
         }),
       });
+
       const data = await res.json();
       if (data.choices && data.choices[0]?.message?.content) {
         setMessages((prev) => [
@@ -108,4 +99,3 @@ function App() {
 }
 
 export default App;
-
