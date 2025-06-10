@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
+// Allow backend URL override via environment variable
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
 import BgImage from "./Icon_Logo/Background_Image_For_App.png";
@@ -24,7 +27,7 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/v1/chat/completions", {
+      const res = await fetch(`${API_BASE_URL}/v1/chat/completions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
