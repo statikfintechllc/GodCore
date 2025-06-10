@@ -25,7 +25,7 @@ app.add_middleware(
 )
 
 # --- Model Config ---
-MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
+MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
 TENSOR_SPLIT = "18,20"
 llm = Llama(
     model_path=MODEL_PATH,
