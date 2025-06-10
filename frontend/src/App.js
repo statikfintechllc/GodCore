@@ -6,7 +6,6 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
-import BgImage from "./Icon_Logo/Background_Image_For_App.png";
 
 function App() {
   const [input, setInput] = useState("");
@@ -62,40 +61,43 @@ function App() {
   };
 
   return (
-    <div className="app-bg" style={{ backgroundImage: `url(${BgImage})` }}>
-      <div className="header">
-        <img src={AppIcon} alt="App Logo" className="app-logo" />
-        <span className="main-title">
-          GodCore-The Experiment, yet{" "}
-          <span className="smart-red-shadow">Smart</span>
-        </span>
+    <div className="app-bg">
+      <div className="main-content">
+        <div className="header">
+          <img src={AppIcon} alt="App Logo" className="app-logo" />
+          <span className="main-title">
+            GodCore-The Experiment, yet{" "}
+            <span className="smart-red-shadow">Smart</span>
+          </span>
+        </div>
+        <div className="chat-history">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`chat-bubble ${msg.role === "user" ? "user-bubble" : "ai-bubble"}`}
+            >
+              <span>{msg.content}</span>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        <form className="chat-input-form" onSubmit={handleSend}>
+          <input
+            className="chat-input"
+            type="text"
+            value={input}
+            disabled={loading}
+            placeholder={loading ? "Waiting for response..." : "Type your message..."}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button className="chat-send-btn" type="submit" disabled={loading || !input.trim()}>
+            {loading ? "..." : "Send"}
+          </button>
+        </form>
       </div>
-      <div className="chat-history">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`chat-bubble ${msg.role === "user" ? "user-bubble" : "ai-bubble"}`}
-          >
-            <span>{msg.content}</span>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <form className="chat-input-form" onSubmit={handleSend}>
-        <input
-          className="chat-input"
-          type="text"
-          value={input}
-          disabled={loading}
-          placeholder={loading ? "Waiting for response..." : "Type your message..."}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button className="chat-send-btn" type="submit" disabled={loading || !input.trim()}>
-          {loading ? "..." : "Send"}
-        </button>
-      </form>
     </div>
   );
 }
 
 export default App;
+

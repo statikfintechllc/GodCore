@@ -14,12 +14,18 @@ BACKEND_FILE="$BACKEND_DIR/run_llama.py"
 
 export LLAMA_CPP_FORCE_CUDA=1
 export GGML_CUDA_FORCE_MMQ=1
-export GGML_CUDA_PEER_ACCESS=0
+export GGML_CUDA_PEER_ACCESS=0,1
 
 # --- Function: Activate Conda and Env ---
 activate_conda() {
     source ~/miniconda3/etc/profile.d/conda.sh || { echo '[FATAL] Could not source conda. Aborting.'; exit 1; }
     conda activate $ENV_NAME || { echo '[FATAL] Could not activate env. Aborting.'; exit 1; }
+}
+
+# --- Get local IP for LAN ---
+get_local_ip() {
+    # This works for most Linux systems, falls back to 127.0.0.1 if fails
+    ip route get 1 | awk '{print $NF;exit}' 2>/dev/null || echo "127.0.0.1"
 }
 
 # --- Function: Start Backend (run_llama.py) ---
@@ -36,12 +42,13 @@ start_backend() {
 
 # --- Function: Start Frontend (React) ---
 start_frontend() {
-    echo "\n[*] Starting frontend (React)..."
+    echo "\n[*] Starting frontend (React) with public unlocks..."
     cd "$FRONTEND_DIR"
     if [ ! -d node_modules ]; then
         npm install
     fi
-    nohup npm start > "$FRONTEND_LOG" 2>&1 &
+    # Fix "Invalid Host header" by disabling host check for all public tunnels
+    nohup DANGEROUSLY_DISABLE_HOST_CHECK=true HOST=0.0.0.0 PORT=$FRONTEND_PORT npm start > "$FRONTEND_LOG" 2>&1 &
     echo "[*] Frontend log: $FRONTEND_LOG"
 }
 
@@ -54,8 +61,10 @@ sleep 5  # Allow backend time to spawn (if model is huge, increase this)
 start_frontend
 
 echo "\n[*] Both backend and frontend are starting up."
+LOCAL_IP=$(get_local_ip)
 echo "    Backend: http://localhost:$BACKEND_PORT"
-echo "    Frontend: http://localhost:$FRONTEND_PORT"
+echo "    Frontend (local): http://localhost:$FRONTEND_PORT"
+echo "    Frontend (LAN):   http://$LOCAL_IP:$FRONTEND_PORT"
 echo "[*] To stop: pkill -f run_llama.py && pkill -f react-scripts"
 echo "[*] Tail logs: tail -f $BACKEND_LOG $FRONTEND_LOG"
 
@@ -81,7 +90,6 @@ fi
 # --- ngrok Tunnel for Frontend ---
 echo "[*] Starting ngrok tunnel to frontend (http://localhost:$FRONTEND_PORT)..."
 
-# Activate conda for ngrok Python if necessary
 activate_conda
 
 python <<EOF > ngrok_url.txt
@@ -111,7 +119,10 @@ fi
 
 echo "\n[+] Open this URL on your phone to access the UI:"
 echo "$NGROK_URL"
+echo "[+] Local access:    http://localhost:$FRONTEND_PORT"
+echo "[+] Network access:  http://$LOCAL_IP:$FRONTEND_PORT"
 echo "\n[*] Done."
 
 # Clean up
 rm -f ngrok_url.txt
+

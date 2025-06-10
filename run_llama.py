@@ -12,7 +12,7 @@ import argparse
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
 os.environ["GGML_CUDA_FORCE_MMQ"] = "1"
-os.environ["GGML_CUDA_PEER_ACCESS"] = "0"
+os.environ["GGML_CUDA_PEER_ACCESS"] = "0,1"
 
 # --- FastAPI + CORS ---
 app = FastAPI()
@@ -29,9 +29,9 @@ MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=35,  # FULL offload for 13B, always use all available
-    main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[0.5,0.5],  # Split evenly for two 3060s, adjust if VRAM is not matched
+    n_gpu_layers=33,  # FULL offload for 13B, always use all available
+    main_gpu=1,  # 0 = first GPU, you can set this to 1 if desired
+    TENSOR_SPLIT=[18,18],  # Split evenly for two 3060s, adjust if VRAM is not matched
     n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,
@@ -49,7 +49,7 @@ class ChatRequest(BaseModel):
     messages: List[Message]
     temperature: Optional[float] = 0.7
     top_p: Optional[float] = 0.9
-    max_tokens: Optional[int] = 32268
+    max_tokens: Optional[int] = 16184
     stop: Optional[List[str]] = None
 
 
