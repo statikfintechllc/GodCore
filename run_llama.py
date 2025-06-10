@@ -81,7 +81,7 @@ def chat_completion(request: ChatRequest):
 
     # Try Ask Monday (ChatGPT) and fallback to Mistral
     try:
-        monday_result = ask_monday(prompt)
+        monday_result = ask_monday(f"USER PROMPT:\n{prompt}\n\nMODEL ANSWER:\n{mistral_answer}")
         chatgpt_answer = monday_result["response"]
         if not chatgpt_answer.strip():
             raise Exception("ChatGPT/Ask Monday blank response")
