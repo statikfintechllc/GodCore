@@ -36,12 +36,17 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 
 ```text
 godcore/
+│
 ├── README.md
 ├── LICENSE
-├── launch_ngrok-UI.sh
-├── run_llama.py
-├── start_all.sh
-├── stop_all.sh
+├── DEV_DIARY.md
+│
+├── frontend/
+│       ├── run_llama.py
+│       ├── start_all.sh
+│       ├── launch_ngrok-UI.sh
+│       ├── ask_monday_handler.py
+│       └── stop_all.sh
 │
 ├── environment/
 │       ├── install.sh
