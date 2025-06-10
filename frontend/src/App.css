@@ -11,7 +11,7 @@ body, html, #root, .app-bg {
 .app-bg {
   min-height: 100vh;
   min-width: 100vw;
-  background: url('./your-background.jpg') center center / cover no-repeat fixed;
+  background: url('./Icon_Logo/Background_Image_For_App.png') center center / cover no-repeat fixed;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
