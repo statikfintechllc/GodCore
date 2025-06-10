@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 // Import your logos (ensure these paths are correct)
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
 
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware;
 
 # Always allow both your local and any public ngrok origins
 app.add_middleware(
