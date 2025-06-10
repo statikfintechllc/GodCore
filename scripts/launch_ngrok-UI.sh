@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+cd "$(dirname "$0")/.."
+export PYTHONPATH="$PWD"
+
 set -e
 
 # --- Config ---
