@@ -19,7 +19,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 
 # GodCore Llama Mistral-13B Demo
 
-**Install Release v.0.2.0, Do Not Clone, in the middle of adding features, start might bug if cloned directly**
+**Install Release v.0.2.0, Do Not Clone, Currently in the middle of adding a main feature, start and run might bug if cloned directly from master**
 
 *V.0.3.0 will be the bug removal and Perfecting the simple install, and ensuring that the UI properly adjusts framing for all devices where the UI is used.*
 </div>
