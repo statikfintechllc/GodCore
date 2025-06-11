@@ -1,9 +1,11 @@
 {
-  "name": "godcore-frontend",
+  "name": "GodCore-frontend",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
     "react": "^18.3.0",
+    "react-markdown": "latest",
+    "remark-gfm": "latest",
     "cross-env": "^7.0.3",
     "react-dom": "^18.3.0",
     "react-scripts": "5.0.1"
