@@ -95,7 +95,7 @@ cd environment && ./install.sh
 
 # 4. Activate the environment
 conda activate runmistral
-cd frontend/
+cd .. && cd frontend/
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate runmistral
 npm install
@@ -116,8 +116,7 @@ MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-
 ## **Start the Full Stack**
 
 ```bash
-# From godcore/ root:
-cd godcore && ./start_all.sh
+cd scripts && ./start_all.sh
 
 # This will:
 #   - Launch the FastAPI backend (localhost:8000)
@@ -152,6 +151,7 @@ npm start     # (Frontend live at http://localhost:3000)
     ```
 3. Run the launch script:
     ```sh
+    cd scripts
     ./launch_ngrok-UI.sh
     ```
 4. **Scan the QR code** shown in your terminal or **open the printed ngrok URL** in your phone’s browser.
@@ -169,7 +169,7 @@ Your GremlinGPT UI is now instantly accessible from your phone or any remote dev
 3. Place the model file in:
 > *install.sh does this for you, but checking is good*
 ```bash
-/path/to/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
+/your/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 ```
 
 ---
@@ -177,6 +177,7 @@ Your GremlinGPT UI is now instantly accessible from your phone or any remote dev
 ## **Stop All Services**
 
 ```bash
+cd scripts
 ./stop_all.sh
 # (Kills backend and frontend processes)
 ```
