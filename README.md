@@ -88,16 +88,16 @@ git clone https://github.com/statikfintechllc/GodCore.git && \
 cd GodCore
 
 # 2. Install all dependencies and set up environment
-cd environment && ./install.sh
+cd environment && ./install.sh && \
 
-# 3. After install.sh runs place your downloaded model file here:
-#    /path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
+# 3. After install.sh runs it places's your downloaded model file here(Always double check):
+# /path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 
 # 4. Activate the environment
-conda activate runmistral
-cd .. && cd frontend/
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate runmistral
+conda activate runmistral && \
+cd .. && cd frontend/ && \
+source ~/miniconda3/etc/profile.d/conda.sh && \
+conda activate runmistral && \
 npm install
 ```
 
@@ -116,7 +116,8 @@ MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-
 ## **Start the Full Stack**
 
 ```bash
-cd scripts && ./start_all.sh
+cd scripts && \
+./start_all.sh
 
 # This will:
 #   - Launch the FastAPI backend (localhost:8000)
@@ -129,7 +130,7 @@ cd scripts && ./start_all.sh
 > Start backend only:
 
 ```bash
-conda activate runmistral
+conda activate runmistral && \
 python run_llama.py
 # (Backend API live at http://localhost:8000)
 ```
@@ -137,8 +138,8 @@ python run_llama.py
 > Start frontend only:
 
 ```bash
-cd frontend
-npm install   # (first time only)
+cd frontend && \
+npm install && \   # (first time only)
 npm start     # (Frontend live at http://localhost:3000)
 ```
 
@@ -151,7 +152,7 @@ npm start     # (Frontend live at http://localhost:3000)
     ```
 3. Run the launch script:
     ```sh
-    cd scripts
+    cd scripts && \
     ./launch_ngrok-UI.sh
     ```
 4. **Scan the QR code** shown in your terminal or **open the printed ngrok URL** in your phone’s browser.
