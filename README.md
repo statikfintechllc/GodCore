@@ -200,9 +200,9 @@ Reset: After 7:00pm CST on First 2 Clones
 
 ---
 
-## 🚨 Known Issues & Breaking Changes (Last Updated: 2025-06-09)
+## 🚨 Known Issues & Breaking Changes (Last Updated(by myself): 2025-06-09)
 
-- **Llava wheel upgrade (June 2025):**  
+- **Llava wheel upgrade (I found it in early June 2025):**  
   Recent update to Llava introduced a new Python wheel that breaks old installs.  
   **Solution:** See [llama-cpp-python/README.md#installation] for correct wheel and pip flags.  
   _If you get errors about incompatible architecture or missing symbols, re-install with the new wheel instructions. My install.sh builds clean Cuda Wheel every time if you remove your old runmistral environment._
