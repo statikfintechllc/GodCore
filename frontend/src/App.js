@@ -159,7 +159,7 @@ function App() {
     setCurrentSession(sid);
   };
 
-  // Render sidebar or tab
+  // Single, de-duplicated sidebar rendering
   const renderSidebar = () => (
     <>
       {/* Desktop sidebar */}
@@ -181,11 +181,11 @@ function App() {
           ))}
         </div>
       </div>
-      {/* Mobile: floating tab button (remove display: none!) */}
+      {/* Mobile: floating tab button */}
       <button
         className="sidebar-tab-toggle"
         style={{
-          display: window.innerWidth <= 800 ? "block" : "none",
+          display: window.innerWidth <= 900 ? "block" : "none",
           position: "fixed",
           left: 0,
           top: 0,
@@ -199,37 +199,36 @@ function App() {
           cursor: "pointer"
         }}
         onClick={() => setSidebarOpen(true)}
+        aria-label="Open sidebar"
       >☰</button>
-      <div className={`sidebar-modal${sidebarOpen ? " active" : ""}`}>
-        {sidebarOpen && (
-          <div className="sidebar" style={{height:"100vh", minWidth: "65vw"}}>
-            <div style={{textAlign:"right"}}>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                style={{
-                  background: "none", color:"#fff", fontSize:"2rem", border:"none", padding:12, cursor:"pointer"
-                }}
-              >×</button>
-            </div>
-            {/* Sidebar content again for mobile overlay */}
-            <div className="sidebar-title">Chat Sessions</div>
-            <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
-            <div className="sidebar-list">
-              {Object.entries(sessions)
-                .sort((a, b) => b[1].created - a[1].created)
-                .map(([sid, sess]) => (
-                  <div
-                    key={sid}
-                    className={`sidebar-item${sid === currentSession ? " active" : ""}`}
-                    onClick={() => switchSession(sid)}
-                  >
-                    <div className="sidebar-label">{sess.title}</div>
-                    <div className="sidebar-count">{(sess.messages||[]).length}</div>
-                  </div>
-              ))}
-            </div>
+      <div className={`sidebar-modal${sidebarOpen ? " active" : ""}`} onClick={() => setSidebarOpen(false)}>
+        <div className="sidebar" style={{height:"100vh", minWidth: "65vw"}} onClick={e => e.stopPropagation()}>
+          <div style={{textAlign:"right"}}>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                background: "none", color:"#fff", fontSize:"2rem", border:"none", padding:12, cursor:"pointer"
+              }}
+              aria-label="Close sidebar"
+            >×</button>
           </div>
-        )}
+          <div className="sidebar-title">Chat Sessions</div>
+          <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
+          <div className="sidebar-list">
+            {Object.entries(sessions)
+              .sort((a, b) => b[1].created - a[1].created)
+              .map(([sid, sess]) => (
+                <div
+                  key={sid}
+                  className={`sidebar-item${sid === currentSession ? " active" : ""}`}
+                  onClick={() => switchSession(sid)}
+                >
+                  <div className="sidebar-label">{sess.title}</div>
+                  <div className="sidebar-count">{(sess.messages||[]).length}</div>
+                </div>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );
