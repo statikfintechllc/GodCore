@@ -58,7 +58,7 @@ GodCore/
 │
 ├── frontend/
 │   │   ├── package.json
-│   │   └── pack
+│   │   └── package-lock.json
 │   │
 │   ├── public/
 │   │   └── index.html
