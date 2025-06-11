@@ -7,7 +7,9 @@ ninja
 gradio
 requests
 numpy
+pyperclip
 pytesseract
+pillow
 huggingface-hub
 sentencepiece
 rich
