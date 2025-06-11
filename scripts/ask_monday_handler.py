@@ -1,14 +1,14 @@
 # !/usr/bin/env python3
 
 # ─────────────────────────────────────────────────────────────
-# ⚠️ GremlinGPT Fair Use Only | Commercial Use Requires License
-# Built under the GremlinGPT Dual License v1.0
+# ⚠️ GodCore Open-Use | Commercial Use Allowed
+# Built under the GodCore Open-Use License v.0.3.0
 # © 2025 StatikFintechLLC / AscendAI Project
 # Contact: ascend.gremlin@gmail.com
 # ─────────────────────────────────────────────────────────────
 
-# GremlinGPT v1.0.3 :: Module Integrity Directive
-# This script is a component of the GremlinGPT system, under Alpha expansion.
+# GodCore v0.3.0 :: Module Integrity Directive
+# This script is a component of the GodCore system, under Alpha expansion.
 
 import os
 import time
@@ -21,11 +21,11 @@ from PIL import ImageGrab, Image
 from datetime import datetime
 from pathlib import Path
 
-from backend.globals import logger
-from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
-from memory.log_history import log_event
+# Soon
+# from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
+# from memory.log_history import log_event
 
-WATERMARK = "source:GremlinGPT"
+WATERMARK = "source:GodCore"
 ORIGIN = "ask_monday_handler"
 
 SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
