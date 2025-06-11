@@ -24,6 +24,14 @@ function CodeBlock({ className, children }) {
 }
 
 function App() {
+  // Responsive mobile state
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 900);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Mobile sidebar modal state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -89,7 +97,6 @@ function App() {
         }),
       });
       const data = await res.json();
-      // --- FIX: show ONLY the assistant message, never JSON ---
       let msgContent =
         data?.choices && data.choices[0] && data.choices[0].message
           ? data.choices[0].message.content
@@ -118,45 +125,16 @@ function App() {
   // Sidebar rendering (responsive with animation/click)
   const renderSidebar = () => (
     <>
-      {/* Desktop sidebar */}
-      <div className="sidebar">
-        <div className="sidebar-title">Chat Sessions</div>
-        <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
-        <div className="sidebar-list">
-          {Object.entries(sessions)
-            .sort((a, b) => b[1].created - a[1].created)
-            .map(([sid, sess]) => (
-              <div
-                key={sid}
-                className={`sidebar-item${sid === currentSession ? " active" : ""}`}
-                onClick={() => switchSession(sid)}
-              >
-                <div className="sidebar-label">{sess.title}</div>
-                <div className="sidebar-count">{(sess.messages||[]).length}</div>
-              </div>
-          ))}
-        </div>
-      </div>
-      {/* Mobile: floating tab button (animated slide) */}
-      <button
-        className="sidebar-tab-toggle"
-        style={{
-          display: window.innerWidth <= 900 ? "block" : "none",
-        }}
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Open sidebar"
-      >☰</button>
-      <div className={`sidebar-modal${sidebarOpen ? " active" : ""}`} onClick={() => setSidebarOpen(false)}>
-        <div className="sidebar" style={{height:"100vh", minWidth: "65vw"}} onClick={e => e.stopPropagation()}>
-          <div style={{textAlign:"right"}}>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              style={{
-                background: "none", color:"#fff", fontSize:"2rem", border:"none", padding:12, cursor:"pointer"
-              }}
-              aria-label="Close sidebar"
-            >×</button>
-          </div>
+      {/* Desktop sidebar (always visible on desktop) */}
+      {!isMobile && (
+        <div className="sidebar" style={{
+          minWidth: 260,
+          maxWidth: 320,
+          background: "#222228",
+          minHeight: "100vh",
+          overflowY: "auto",
+          zIndex: 100
+        }}>
           <div className="sidebar-title">Chat Sessions</div>
           <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
           <div className="sidebar-list">
@@ -167,6 +145,8 @@ function App() {
                   key={sid}
                   className={`sidebar-item${sid === currentSession ? " active" : ""}`}
                   onClick={() => switchSession(sid)}
+                  tabIndex={0}
+                  style={{ cursor: "pointer" }}
                 >
                   <div className="sidebar-label">{sess.title}</div>
                   <div className="sidebar-count">{(sess.messages||[]).length}</div>
@@ -174,23 +154,107 @@ function App() {
             ))}
           </div>
         </div>
-      </div>
+      )}
+      {/* Mobile: floating tab button (animated slide) */}
+      {isMobile && (
+        <>
+          <button
+            className="sidebar-tab-toggle"
+            style={{
+              display: "block",
+              position: "fixed",
+              top: "12px",
+              left: "12px",
+              zIndex: 202,
+            }}
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
+          >☰</button>
+          <div
+            className={`sidebar-modal${sidebarOpen ? " active" : ""}`}
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              display: sidebarOpen ? "flex" : "none",
+              position: "fixed",
+              zIndex: 201,
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(20,20,24,0.85)",
+              alignItems: "flex-start"
+            }}
+          >
+            <div className="sidebar" style={{
+              height:"100vh",
+              minWidth: "65vw",
+              background: "#222228",
+              zIndex: 202,
+              overflowY: "auto"
+            }} onClick={e => e.stopPropagation()}>
+              <div style={{textAlign:"right"}}>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  style={{
+                    background: "none", color:"#fff", fontSize:"2rem", border:"none", padding:12, cursor:"pointer"
+                  }}
+                  aria-label="Close sidebar"
+                >×</button>
+              </div>
+              <div className="sidebar-title">Chat Sessions</div>
+              <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
+              <div className="sidebar-list">
+                {Object.entries(sessions)
+                  .sort((a, b) => b[1].created - a[1].created)
+                  .map(([sid, sess]) => (
+                    <div
+                      key={sid}
+                      className={`sidebar-item${sid === currentSession ? " active" : ""}`}
+                      onClick={() => switchSession(sid)}
+                      tabIndex={0}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="sidebar-label">{sess.title}</div>
+                      <div className="sidebar-count">{(sess.messages||[]).length}</div>
+                    </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 
   // Main chat area
   return (
-    <div className="app-bg">
-      <div className="main-content">
+    <div className="app-bg" style={{ minHeight: "100vh", width: "100vw", overflowX: "hidden" }}>
+      <div className="main-content" style={{
+        minHeight: "100vh",
+        width: "100vw",
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row"
+      }}>
         {renderSidebar()}
-        <div className="chat-main-area">
+        <div className="chat-main-area" style={{
+          flex: "1 1 0%",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+          height: "100vh",
+          overflow: "hidden"
+        }}>
           <div className="header" style={{background: "none"}}>
             <img src={AppIcon} alt="App Logo" className="app-logo" />
             <span className="main-title">
               GodCore-The Experiment, yet <span className="smart-red-shadow">Smart</span>
             </span>
           </div>
-          <div className="chat-history">
+          <div className="chat-history" style={{
+            flex: "1 1 0%",
+            overflowY: "auto",
+            padding: 12
+          }}>
             {(sessions[currentSession]?.messages || []).map((msg, idx) => (
               <div key={idx} className={getBubbleClass(msg.role, msg.monday)}>
                 <ReactMarkdown
