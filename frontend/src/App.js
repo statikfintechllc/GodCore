@@ -70,7 +70,7 @@ function App() {
     });
   };
 
-  // Stream-aware send
+  // Modern, **JSON-safe** chat POST — displays ONLY the assistant's text (not the raw JSON).
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
@@ -79,8 +79,6 @@ function App() {
     setInput("");
     setLoading(true);
 
-    let buffer = "";
-    let lastMsgIndex = null;
     try {
       const res = await fetch("/v1/chat/completions", {
         method: "POST",
@@ -90,56 +88,14 @@ function App() {
           messages: [...(sessions[currentSession]?.messages || []), userMsg],
         }),
       });
-      if (res.body && res.body.getReader) {
-        // Streaming (futureproof; backend may need chunked streaming)
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let done = false;
-        let monday = false;
-        while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          if (value) {
-            buffer += decoder.decode(value, { stream: true });
-            try {
-              const data = JSON.parse(buffer);
-              let content = data.choices?.[0]?.message?.content || "";
-              if (data.model && data.model.toLowerCase().includes("monday")) monday = true;
-              if (content) {
-                setSessions(prev => {
-                  const updated = {...prev};
-                  let msgs = [...(updated[currentSession].messages || [])];
-                  if (lastMsgIndex == null) {
-                    msgs.push({ role: "assistant", content, monday });
-                    lastMsgIndex = msgs.length - 1;
-                  } else {
-                    msgs[lastMsgIndex] = { role: "assistant", content, monday };
-                  }
-                  updated[currentSession].messages = msgs;
-                  return updated;
-                });
-              }
-            } catch {}
-          }
-        }
-        setSessions(prev => {
-          const updated = {...prev};
-          let msgs = [...(updated[currentSession].messages || [])];
-          if (lastMsgIndex == null) {
-            msgs.push({ role: "assistant", content: buffer, monday: false });
-          } else {
-            msgs[lastMsgIndex] = { role: "assistant", content: buffer, monday: false };
-          }
-          updated[currentSession].messages = msgs;
-          return updated;
-        });
-      } else {
-        // No stream
-        const data = await res.json();
-        let msgContent = data.choices?.[0]?.message?.content || "";
-        const monday = (data.model && data.model.toLowerCase().includes("monday"));
-        appendMsg({ role: "assistant", content: msgContent, monday });
-      }
+      const data = await res.json();
+      // --- FIX: show ONLY the assistant message, never JSON ---
+      let msgContent =
+        data?.choices && data.choices[0] && data.choices[0].message
+          ? data.choices[0].message.content
+          : "API error: No response from backend.";
+      const monday = (data.model && data.model.toLowerCase().includes("monday"));
+      appendMsg({ role: "assistant", content: msgContent, monday });
     } catch (err) {
       appendMsg({ role: "assistant", content: "API error: " + err.message });
     } finally {
@@ -159,7 +115,7 @@ function App() {
     setCurrentSession(sid);
   };
 
-  // Single, de-duplicated sidebar rendering
+  // Sidebar rendering (responsive with animation/click)
   const renderSidebar = () => (
     <>
       {/* Desktop sidebar */}
@@ -181,22 +137,11 @@ function App() {
           ))}
         </div>
       </div>
-      {/* Mobile: floating tab button */}
+      {/* Mobile: floating tab button (animated slide) */}
       <button
         className="sidebar-tab-toggle"
         style={{
           display: window.innerWidth <= 900 ? "block" : "none",
-          position: "fixed",
-          left: 0,
-          top: 0,
-          zIndex: 100,
-          background: "#1b1d28ee",
-          color: "#fff",
-          border: "none",
-          borderRadius: "0 0 14px 0",
-          fontSize: "1.55rem",
-          padding: "9px 25px 10px 16px",
-          cursor: "pointer"
         }}
         onClick={() => setSidebarOpen(true)}
         aria-label="Open sidebar"
