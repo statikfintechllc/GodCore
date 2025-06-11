@@ -10,6 +10,7 @@ numpy
 huggingface-hub
 sentencepiece
 rich
+pyautogui
 pydantic
 python-multipart
 orjson
