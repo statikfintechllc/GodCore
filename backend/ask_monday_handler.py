@@ -18,16 +18,16 @@ import pytesseract
 import subprocess
 import platform
 from PIL import ImageGrab, Image
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
-# I will uncomment whenI finish adding embedding/memory features
+# Uncomment when embedding/memory features are ready
 # from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
 # from memory.log_history import log_event
 
 # WATERMARK = "source:GodCore"
 # ORIGIN = "ask_monday_handler"
- 
+
 SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
 SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -55,21 +55,32 @@ def paste_and_enter(text):
     time.sleep(1)
     pyautogui.press("enter")
 
-def ask_monday_stream(prompt):
-    """Stream OCR'd content block by block as ChatGPT responds."""
+def ask_monday_stream(prompt, interrupt_checker=None):
+    """
+    Stream OCR'd content block by block as ChatGPT responds.
+    Streams for up to 3.5 minutes unless interrupted.
+    """
     print(f"[ASK] Asking ChatGPT: {prompt}")
     launch_chatgpt()
     paste_and_enter(prompt)
     last_text = ""
-    for i in range(5):  # up to 5 scrolls (can adjust for longer sessions)
-        time.sleep(2.5 if i == 0 else 1.5)
+    start_time = datetime.utcnow()
+    max_duration = timedelta(minutes=3.5)
+    while True:
+        now = datetime.utcnow()
+        if now - start_time > max_duration:
+            break
+        if interrupt_checker and interrupt_checker():
+            print("[ASK] Streaming interrupted by backend.")
+            break
+        time.sleep(2.5 if last_text == "" else 1.5)
         screenshot = ImageGrab.grab()
         text = pytesseract.image_to_string(screenshot)
         if text and text.strip() and text != last_text:
             last_text = text
             yield text.strip()
         pyautogui.scroll(-500)
-    yield "[END]"
+    yield "[END_OF_RESPONSE]"
 
 def ask_monday(prompt):
     # Kept for legacy sync use; not used for streaming
