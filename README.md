@@ -54,9 +54,12 @@ GodCore/
 │    │
 │    ├── llama-cpp-python/        
 │    │    └── ...    # All llama-cpp-python files and folders here
+│    │
 │    └── logs/
+│         │
 │         ├── chat_responses/
 │         │   └── ...    # All chatgpt files here
+│         │
 │         └── screenshots/ 
 │             └── ...    # All screenshots here
 │
@@ -79,7 +82,6 @@ GodCore/
     │
     └── node_modules/
           └── ...    # All node_modules are built here
-
 ```
 
 ## **Install & Setup**
