@@ -26,11 +26,11 @@ import json
 from ask_monday_handler import ask_monday_stream
 
 # Ensure PYTHONPATH is repo root regardless of current dir
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
-    
-os.environ['PYTHONPATH'] = REPO_ROOT
+
+os.environ["PYTHONPATH"] = REPO_ROOT
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
 os.environ["GGML_CUDA_FORCE_MMQ"] = "1"
@@ -53,7 +53,7 @@ llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
     n_gpu_layers=35,
-    main_gpu=1,         # 0 = first GPU, or 1 = second GPU
+    main_gpu=1,  # 0 = first GPU, or 1 = second GPU
     TENSOR_SPLIT=[16, 19],
     n_threads=24,
     use_mmap=True,
@@ -61,9 +61,11 @@ llm = Llama(
     verbose=True,
 )
 
+
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     content: str
+
 
 class ChatRequest(BaseModel):
     model: str
@@ -73,21 +75,28 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = 16184
     stop: Optional[List[str]] = None
 
+
 @app.get("/")
 def root():
     return {
         "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
     }
 
+
 from fastapi.responses import StreamingResponse
+
 
 @app.post("/v1/chat/completions")
 def chat_completion(request: ChatRequest):
     # Build prompt
     prompt = (
         "".join(
-            [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
-        ) + "Assistant:"
+            [
+                f"{msg.role.capitalize()}: {msg.content.strip()}\n"
+                for msg in request.messages
+            ]
+        )
+        + "Assistant:"
     )
 
     def event_stream():
@@ -139,13 +148,14 @@ def chat_completion(request: ChatRequest):
                 yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
         except Exception as e:
             yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
-    
+
     # Return StreamingResponse from the route function
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=8000, help="Port to run server on")
+    parser.add_argument("--port", type=int, default=8000, help="Port to run server on")
     args = parser.parse_args()
 
     print(f"🚀 Devin-compatible API ready on http://localhost:{args.port}")

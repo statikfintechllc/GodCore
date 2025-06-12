@@ -34,6 +34,7 @@ SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 MEMORY_DIR = Path(os.path.expanduser("data/logs/chat_responses"))
 MEMORY_DIR.mkdir(parents=True, exist_ok=True)
 
+
 def launch_chatgpt():
     """Launch native ChatGPT client based on platform."""
     try:
@@ -49,11 +50,13 @@ def launch_chatgpt():
     except Exception as e:
         print(f"[ASK] Failed to launch ChatGPT: {e}")
 
+
 def paste_and_enter(text):
     pyperclip.copy(text)
     pyautogui.hotkey("ctrl", "v")
     time.sleep(1)
     pyautogui.press("enter")
+
 
 def ask_monday_stream(prompt, interrupt_checker=None):
     """
@@ -82,6 +85,7 @@ def ask_monday_stream(prompt, interrupt_checker=None):
         pyautogui.scroll(-500)
     yield "[END_OF_RESPONSE]"
 
+
 def ask_monday(prompt):
     # Kept for legacy sync use; not used for streaming
     print(f"[ASK] Asking ChatGPT: {prompt}")
@@ -95,10 +99,12 @@ def ask_monday(prompt):
     # save_to_memory(prompt, response)
     return {"prompt": prompt, "response": response}
 
+
 # FSM-compatible entry point
 def handle(task):
     prompt = task.get("target") or task.get("text") or "What is your task?"
     return ask_monday(prompt)
+
 
 # Standalone test
 if __name__ == "__main__":
