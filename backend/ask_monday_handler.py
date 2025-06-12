@@ -1,14 +1,14 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 
 # ─────────────────────────────────────────────────────────────
-# ⚠️ GremlinGPT Fair Use Only | Commercial Use Requires License
-# Built under the GremlinGPT Dual License v1.0
-# © 2025 StatikFintechLLC / AscendAI Project
+# ⚠️ GodCore Open-Use | Commercial Use allowed
+# Built under the GodCore Open-Use License v.0.3.0
+# © 2025 StatikFintechLLC / GodCore Project
 # Contact: ascend.gremlin@gmail.com
 # ─────────────────────────────────────────────────────────────
 
-# GremlinGPT v1.0.3 :: Module Integrity Directive
-# This script is a component of the GremlinGPT system, under Alpha expansion.
+# GodCore v.0.3.0 :: Module Integrity Directive
+# This script is a component of the GodCore system, under Alpha expansion.
 
 import os
 import time
@@ -21,26 +21,24 @@ from PIL import ImageGrab, Image
 from datetime import datetime
 from pathlib import Path
 
-#from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
-#from memory.log_history import log_event
+# I will uncomment whenI finish adding embedding/memory features
+# from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
+# from memory.log_history import log_event
 
-#WATERMARK = "source:GremlinGPT"
-#ORIGIN = "ask_monday_handler"
-
-#SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
-#SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+# WATERMARK = "source:GodCore"
+# ORIGIN = "ask_monday_handler"
+ 
+SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
+SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 
 MEMORY_DIR = Path(os.path.expanduser("data/logs/chat_responses"))
 MEMORY_DIR.mkdir(parents=True, exist_ok=True)
-
 
 def launch_chatgpt():
     """Launch native ChatGPT client based on platform."""
     try:
         system = platform.system()
-        if system == "Darwin":
-            subprocess.Popen(["open", "-a", "ChatGPT"])
-        elif system == "Linux":
+        if system == "Linux":
             subprocess.Popen(["gdk-launch", "chatgpt"])
         elif system == "Windows":
             subprocess.Popen(["start", "", "ChatGPT"], shell=True)
@@ -49,8 +47,7 @@ def launch_chatgpt():
         time.sleep(5)
         pyautogui.click()
     except Exception as e:
-        logger.error(f"[ASK] Failed to launch ChatGPT: {e}")
-
+        print(f"[ASK] Failed to launch ChatGPT: {e}")
 
 def paste_and_enter(text):
     pyperclip.copy(text)
@@ -58,79 +55,42 @@ def paste_and_enter(text):
     time.sleep(1)
     pyautogui.press("enter")
 
-
-def scroll_and_capture():
-    time.sleep(10)
-    images = []
-    for i in range(3):
-        screenshot = ImageGrab.grab()
-        path = (
-            SCREENSHOT_DIR
-            / f"monday_response_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{i}.png"
-        )
-        screenshot.save(path)
-        images.append(path)
-        pyautogui.scroll(-500)
-        time.sleep(1.5)
-    return images
-
-
-def ocr_images(image_paths):
-    blocks = []
-    for p in image_paths:
-        try:
-            img = Image.open(p)
-            text = pytesseract.image_to_string(img)
-            blocks.append(text.strip())
-        except Exception as e:
-            logger.warning(f"[ASK] OCR failed for {p}: {e}")
-            blocks.append("[OCR ERROR]")
-    return "\n---\n".join(blocks)
-
-
-def save_to_memory(prompt, response):
-    timestamp = datetime.utcnow().isoformat()
-    vector = embed_text(response)
-    summary = f"ChatGPT external response to: {prompt[:100]}"
-    package_embedding(
-        text=summary,
-        vector=vector,
-        meta={
-            "origin": ORIGIN,
-            "timestamp": timestamp,
-            "prompt": prompt,
-            "response_len": len(response),
-            "watermark": WATERMARK,
-        },
-    )
-    inject_watermark(origin=ORIGIN)
-    log_event("ask", "monday_query", {"prompt": prompt}, status="external")
-
-    filename = (
-        MEMORY_DIR / f"chat_response_{timestamp.replace(':', '').replace('-', '')}.md"
-    )
-    with open(filename, "w") as f:
-        f.write(f"# Prompt:\n{prompt}\n\n# Response:\n{response}\n")
-    logger.success(f"[ASK] ChatGPT result embedded and saved: {filename}")
-
-
-def ask_monday(prompt):
-    logger.info(f"[ASK] Asking ChatGPT: {prompt}")
+def ask_monday_stream(prompt):
+    """Stream OCR'd content block by block as ChatGPT responds."""
+    print(f"[ASK] Asking ChatGPT: {prompt}")
     launch_chatgpt()
     paste_and_enter(prompt)
-    images = scroll_and_capture()
-    response = ocr_images(images)
-    save_to_memory(prompt, response)
-    return {"prompt": prompt, "response": response}
+    last_text = ""
+    for i in range(5):  # up to 5 scrolls (can adjust for longer sessions)
+        time.sleep(2.5 if i == 0 else 1.5)
+        screenshot = ImageGrab.grab()
+        text = pytesseract.image_to_string(screenshot)
+        if text and text.strip() and text != last_text:
+            last_text = text
+            yield text.strip()
+        pyautogui.scroll(-500)
+    yield "[END]"
 
+def ask_monday(prompt):
+    # Kept for legacy sync use; not used for streaming
+    print(f"[ASK] Asking ChatGPT: {prompt}")
+    launch_chatgpt()
+    paste_and_enter(prompt)
+    time.sleep(10)
+    screenshot = ImageGrab.grab()
+    text = pytesseract.image_to_string(screenshot)
+    response = text.strip() if text else ""
+    # Optionally save to memory
+    # save_to_memory(prompt, response)
+    return {"prompt": prompt, "response": response}
 
 # FSM-compatible entry point
 def handle(task):
     prompt = task.get("target") or task.get("text") or "What is your task?"
     return ask_monday(prompt)
 
-
 # Standalone test
 if __name__ == "__main__":
     example = "Explain EMA crossover for penny stocks under 10 dollars."
-    ask_monday(example)
+    for chunk in ask_monday_stream(example):
+        print(chunk)
