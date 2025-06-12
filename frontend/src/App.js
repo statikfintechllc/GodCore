@@ -77,6 +77,25 @@ function App() {
       return updated;
     });
   };
+  // ---- Add this inside App() ----
+const handleDeleteChat = (sid, e) => {
+  e.stopPropagation(); // Prevents switching to deleted chat
+  setSessions(prev => {
+    const updated = { ...prev };
+    delete updated[sid];
+    // If current chat is deleted, pick another (or make new)
+    let newCurrent = currentSession;
+    if (sid === currentSession) {
+      const remaining = Object.keys(updated);
+      newCurrent = remaining.length ? remaining[0] : makeId();
+      if (!updated[newCurrent]) {
+        updated[newCurrent] = { title: ts(), created: Date.now(), messages: [] };
+      }
+    }
+    setCurrentSession(newCurrent);
+    return updated;
+  });
+};
 
   // Modern, JSON-safe chat POST — displays ONLY the assistant's text (not the raw JSON).
   const handleSend = async (e) => {
@@ -130,22 +149,25 @@ function App() {
       <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
       <div className="sidebar-list">
         {Object.entries(sessions)
-          .sort((a, b) => b[1].created - a[1].created)
-          .map(([sid, sess]) => (
-            <div
-              key={sid}
-              className={`sidebar-item${sid === currentSession ? " active" : ""}`}
-              onClick={() => switchSession(sid)}
-              tabIndex={0}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="sidebar-label">{sess.title}</div>
-              <div className="sidebar-count">{(sess.messages || []).length}</div>
-            </div>
-        ))}
-      </div>
-    </>
-  );
+  .sort((a, b) => b[1].created - a[1].created)
+  .map(([sid, sess]) => (
+      <div
+        key={sid}
+        className={`sidebar-item${sid === currentSession ? " active" : ""}`}
+        onClick={() => switchSession(sid)}
+        tabIndex={0}
+        style={{ cursor: "pointer", position: "relative" }}
+    >
+      <div className="sidebar-label">{sess.title}</div>
+      <div className="sidebar-count">{(sess.messages || []).length}</div>
+      <button
+        className="sidebar-delete-btn"
+        title="Delete chat"
+        onClick={e => handleDeleteChat(sid, e)}
+        tabIndex={-1}
+      >🗑</button>
+    </div>
+))}
 
   return (
     <div>
