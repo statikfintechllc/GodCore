@@ -39,7 +39,7 @@ def launch_chatgpt():
     try:
         system = platform.system()
         if system == "Linux":
-            subprocess.Popen(["gdk-launch", "chatgpt"])
+            subprocess.Popen(["gtk-launch", "chatgpt"])
         elif system == "Windows":
             subprocess.Popen(["start", "", "ChatGPT"], shell=True)
         else:
