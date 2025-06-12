@@ -1,53 +1,3 @@
-body, html, #root {
-  min-height: 100vh;
-  min-width: 100vw;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  width: 100vw;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  position: relative;
-}
-
-.app-bg {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  min-width: 100vw;
-  min-height: 100vh;
-  z-index: 0;
-  background-image: url('./Icon_Logo/Background_Image_For_App.png');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  -webkit-background-size: cover;
-  -webkit-backface-visibility: hidden;
-  will-change: transform;
-}
-
-/* --- Mobile/tablet/iOS/Android: force viewport fill and prevent iOS zoom issues --- */
-@media (max-width: 900px), (max-height: 700px) {
-  .app-bg {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    min-width: 100vw;
-    min-height: 100vh;
-    background-image: url('./Icon_Logo/Background_Image_For_App.png');
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-attachment: scroll !important;    /* << iOS/Android must have this to prevent jump */
-    z-index: 0;
-    -webkit-background-size: cover !important;
-    -webkit-backface-visibility: hidden;
-  }
-}
-
 /* Prevent parent containers from clipping or causing scroll */
 body, html, #root {
   min-height: 100vh;
@@ -60,6 +10,43 @@ body, html, #root {
   box-sizing: border-box;
   overflow-x: hidden;
   position: relative;
+}
+
+.app-bg {
+  position: fixed;
+  inset: 0; /* top:0;right:0;bottom:0;left:0; */
+  z-index: 0;
+  background-image: url('./Icon_Logo/Background_Image_For_App.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+
+  /* For Safari/iOS: */
+  -webkit-background-size: cover;
+  -webkit-background-position: center center;
+  -webkit-background-repeat: no-repeat;
+  -webkit-background-attachment: fixed;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+/* Mobile/Tablet Fix (No squishing, just fill naturally) */
+@media (max-width: 900px), (max-height: 700px) {
+  .app-bg {
+    position: fixed !important;
+    inset: 0 !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
+    -webkit-background-size: cover !important;
+    -webkit-background-position: center center !important;
+    -webkit-background-repeat: no-repeat !important;
+    -webkit-background-attachment: scroll !important;
+    z-index: 0 !important;
+  }
 }
 
 .main-content {
