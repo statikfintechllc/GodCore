@@ -78,9 +78,9 @@ function App() {
     });
   };
 
-  // ---- Chat deletion logic ----
+  // Delete chat (with correct logic)
   const handleDeleteChat = (sid, e) => {
-    e.stopPropagation(); // Prevents switching to deleted chat
+    e.stopPropagation();
     setSessions(prev => {
       const updated = { ...prev };
       delete updated[sid];
@@ -98,7 +98,7 @@ function App() {
     });
   };
 
-  // Modern, JSON-safe chat POST — displays ONLY the assistant's text (not the raw JSON).
+  // Chat POST
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
@@ -187,6 +187,13 @@ function App() {
           <>
             <button
               className="sidebar-tab-toggle"
+              style={{
+                display: "block",
+                position: "fixed",
+                left: 0,
+                top: 0,
+                zIndex: 110
+              }}
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar"
             >☰</button>
