@@ -32,7 +32,7 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Mobile sidebar modal state
+  // Sidebar modal state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Chat sessions and UI state
@@ -111,30 +111,26 @@ function App() {
   };
 
   // New chat session
-  const handleNewChat = () => {
+  const handleNewChat = (e) => {
+    e?.stopPropagation();
     const sid = makeId();
     setCurrentSession(sid);
     setSessions(prev => ({ ...prev, [sid]: { title: ts(), created: Date.now(), messages: [] }}));
+    if (isMobile) setSidebarOpen(false);
   };
 
-  const switchSession = (sid) => {
+  const switchSession = (sid, e) => {
+    e?.stopPropagation();
     setSidebarOpen(false);
     setCurrentSession(sid);
   };
 
-  // Sidebar rendering (responsive with animation/click)
+  // Sidebar rendering (responsive)
   const renderSidebar = () => (
     <>
-      {/* Desktop sidebar (always visible on desktop) */}
+      {/* Desktop sidebar */}
       {!isMobile && (
-        <div className="sidebar" style={{
-          minWidth: 260,
-          maxWidth: 320,
-          background: "#222228",
-          minHeight: "100vh",
-          overflowY: "auto",
-          zIndex: 100
-        }}>
+        <aside className="sidebar">
           <div className="sidebar-title">Chat Sessions</div>
           <button className="sidebar-new" onClick={handleNewChat}>+ New Chat</button>
           <div className="sidebar-list">
@@ -144,7 +140,7 @@ function App() {
                 <div
                   key={sid}
                   className={`sidebar-item${sid === currentSession ? " active" : ""}`}
-                  onClick={() => switchSession(sid)}
+                  onClick={(e) => switchSession(sid, e)}
                   tabIndex={0}
                   style={{ cursor: "pointer" }}
                 >
@@ -153,45 +149,41 @@ function App() {
                 </div>
             ))}
           </div>
-        </div>
+        </aside>
       )}
-      {/* Mobile: floating tab button (animated slide) */}
+      {/* Mobile: floating tab button + animated modal sidebar */}
       {isMobile && (
         <>
           <button
             className="sidebar-tab-toggle"
-            style={{
-              display: "block",
-              position: "fixed",
-              top: "12px",
-              left: "12px",
-              zIndex: 202,
-            }}
+            type="button"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open sidebar"
           >☰</button>
           <div
             className={`sidebar-modal${sidebarOpen ? " active" : ""}`}
-            onClick={() => setSidebarOpen(false)}
             style={{
-              display: sidebarOpen ? "flex" : "none",
-              position: "fixed",
-              zIndex: 201,
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              background: "rgba(20,20,24,0.85)",
-              alignItems: "flex-start"
+              pointerEvents: sidebarOpen ? "auto" : "none",
+              opacity: sidebarOpen ? 1 : 0,
+              transition: "opacity 0.25s cubic-bezier(.44,.05,.77,.41)"
             }}
+            onClick={() => setSidebarOpen(false)}
           >
-            <div className="sidebar" style={{
-              height:"100vh",
-              minWidth: "65vw",
-              background: "#222228",
-              zIndex: 202,
-              overflowY: "auto"
-            }} onClick={e => e.stopPropagation()}>
+            <nav
+              className="sidebar"
+              style={{
+                height:"100vh",
+                minWidth: "65vw",
+                maxWidth: "97vw",
+                transform: sidebarOpen ? "translateX(0%)" : "translateX(-110%)",
+                boxShadow: sidebarOpen ? "12px 0 32px #000a" : undefined,
+                transition: "transform 0.39s cubic-bezier(.57,.21,.69,1.25)",
+                background: "#222228",
+                zIndex: 202,
+                overflowY: "auto"
+              }}
+              onClick={e => e.stopPropagation()}
+            >
               <div style={{textAlign:"right"}}>
                 <button
                   onClick={() => setSidebarOpen(false)}
@@ -210,7 +202,7 @@ function App() {
                     <div
                       key={sid}
                       className={`sidebar-item${sid === currentSession ? " active" : ""}`}
-                      onClick={() => switchSession(sid)}
+                      onClick={(e) => switchSession(sid, e)}
                       tabIndex={0}
                       style={{ cursor: "pointer" }}
                     >
@@ -219,7 +211,7 @@ function App() {
                     </div>
                 ))}
               </div>
-            </div>
+            </nav>
           </div>
         </>
       )}
@@ -228,7 +220,7 @@ function App() {
 
   // Main chat area
   return (
-    <div className="app-bg" style={{ minHeight: "100vh", width: "100vw", overflowX: "hidden" }}>
+    <div className="app-bg">
       <div className="main-content" style={{
         minHeight: "100vh",
         width: "100vw",
@@ -236,25 +228,14 @@ function App() {
         flexDirection: isMobile ? "column" : "row"
       }}>
         {renderSidebar()}
-        <div className="chat-main-area" style={{
-          flex: "1 1 0%",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: 0,
-          height: "100vh",
-          overflow: "hidden"
-        }}>
-          <div className="header" style={{background: "none"}}>
+        <main className="chat-main-area">
+          <header className="header" style={{background: "none"}}>
             <img src={AppIcon} alt="App Logo" className="app-logo" />
             <span className="main-title">
               GodCore-The Experiment, yet <span className="smart-red-shadow">Smart</span>
             </span>
-          </div>
-          <div className="chat-history" style={{
-            flex: "1 1 0%",
-            overflowY: "auto",
-            padding: 12
-          }}>
+          </header>
+          <section className="chat-history">
             {(sessions[currentSession]?.messages || []).map((msg, idx) => (
               <div key={idx} className={getBubbleClass(msg.role, msg.monday)}>
                 <ReactMarkdown
@@ -276,7 +257,7 @@ function App() {
               </div>
             ))}
             <div ref={messagesEndRef} />
-          </div>
+          </section>
           <form className="chat-input-form" onSubmit={handleSend}>
             <input
               className="chat-input"
@@ -291,7 +272,7 @@ function App() {
               {loading ? "..." : "Send"}
             </button>
           </form>
-        </div>
+        </main>
       </div>
     </div>
   );
