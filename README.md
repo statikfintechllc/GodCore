@@ -17,7 +17,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
 
-# GodCore Llama Mistral-13B Demo
+# GodCore Llama Mistral-13B Expirament
 
 **Currently in the middle of adding a main feature, and currently Fighting Background Imaging for mobile and side-bar accessibility and alignment. As well as, a ChatGPT auto-filter non-api.**
 
