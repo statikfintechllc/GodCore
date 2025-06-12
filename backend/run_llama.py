@@ -91,55 +91,56 @@ def chat_completion(request: ChatRequest):
     )
 
     def event_stream():
-    global llm  # Required if you want to reset/reload the model
+        global llm  # Required if you want to reset/reload the model
 
-    # 1. Full Mistral answer (blocking, robust to token/context errors)
-    try:
-        output = llm(
-            prompt=prompt,
-            temperature=request.temperature,
-            top_p=request.top_p,
-            max_tokens=request.max_tokens,
-            stop=request.stop or ["</s>", "User:", "Assistant:"],
-        )
-        mistral_answer = output["choices"][0]["text"].strip()
-    except Exception as e:
-        # Optionally: try to reload model on token/context error, then retry inference ONCE
-        mistral_answer = f"[Mistral inference error: {e}]"
-        if "token" in str(e).lower() or "context" in str(e).lower():
-            try:
-                llm = Llama(
-                    model_path=MODEL_PATH,
-                    n_ctx=4096,
-                    n_gpu_layers=35,
-                    main_gpu=1,
-                    TENSOR_SPLIT=[16, 19],
-                    n_threads=24,
-                    use_mmap=True,
-                    use_mlock=False,
-                    verbose=True,
-                )
-                output = llm(
-                    prompt=prompt,
-                    temperature=request.temperature,
-                    top_p=request.top_p,
-                    max_tokens=request.max_tokens,
-                    stop=request.stop or ["</s>", "User:", "Assistant:"],
-                )
-                mistral_answer = output["choices"][0]["text"].strip()
-            except Exception as e2:
-                mistral_answer = f"[Mistral reload error: {e2}]"
+        # 1. Full Mistral answer (blocking, robust to token/context errors)
+        try:
+            output = llm(
+                prompt=prompt,
+                temperature=request.temperature,
+                top_p=request.top_p,
+                max_tokens=request.max_tokens,
+                stop=request.stop or ["</s>", "User:", "Assistant:"],
+            )
+            mistral_answer = output["choices"][0]["text"].strip()
+        except Exception as e:
+            # Optionally: try to reload model on token/context error, then retry inference ONCE
+            mistral_answer = f"[Mistral inference error: {e}]"
+            if "token" in str(e).lower() or "context" in str(e).lower():
+                try:
+                    llm = Llama(
+                        model_path=MODEL_PATH,
+                        n_ctx=4096,
+                        n_gpu_layers=35,
+                        main_gpu=1,
+                        TENSOR_SPLIT=[16, 19],
+                        n_threads=24,
+                        use_mmap=True,
+                        use_mlock=False,
+                        verbose=True,
+                    )
+                    output = llm(
+                        prompt=prompt,
+                        temperature=request.temperature,
+                        top_p=request.top_p,
+                        max_tokens=request.max_tokens,
+                        stop=request.stop or ["</s>", "User:", "Assistant:"],
+                    )
+                    mistral_answer = output["choices"][0]["text"].strip()
+                except Exception as e2:
+                    mistral_answer = f"[Mistral reload error: {e2}]"
 
-    # 2. Immediately yield Mistral result as first event
-    yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
+        # 2. Immediately yield Mistral result as first event
+        yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
 
-    # 3. Now stream ChatGPT’s result, chunk by chunk
-    try:
-        for chunk in ask_monday_stream(prompt):
-            yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
-    except Exception as e:
-        yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
+        # 3. Now stream ChatGPT’s result, chunk by chunk
+        try:
+            for chunk in ask_monday_stream(prompt):
+                yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
+        except Exception as e:
+            yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
     
+    # Return StreamingResponse from the route function
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":
