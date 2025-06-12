@@ -9,8 +9,9 @@ from llama_cpp import Llama
 import uvicorn
 import argparse
 import sys
+import json
 
-from backend.ask_monday_handler import ask_monday  # <---- PATCHED: Import handler
+from backend.ask_monday_handler import ask_monday_stream
 
 # Ensure PYTHONPATH is repo root regardless of current dir
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -66,6 +67,8 @@ def root():
         "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
     }
 
+from fastapi.responses import StreamingResponse
+
 @app.post("/v1/chat/completions")
 def chat_completion(request: ChatRequest):
     # Build prompt
@@ -74,51 +77,32 @@ def chat_completion(request: ChatRequest):
             [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
         ) + "Assistant:"
     )
-    try:
-        output = llm(
-            prompt=prompt,
-            temperature=request.temperature,
-            top_p=request.top_p,
-            max_tokens=request.max_tokens,
-            stop=request.stop or ["</s>", "User:", "Assistant:"],
-        )
-        mistral_answer = output["choices"][0]["text"].strip()
-    except Exception as e:
-        return {"error": "InferenceFailure", "detail": str(e)}
 
-    # Try Ask Monday (ChatGPT) and fallback to Mistral
-    try:
-        monday_result = ask_monday(prompt)
-        chatgpt_answer = monday_result["response"]
-        if not chatgpt_answer.strip():
-            raise Exception("ChatGPT/Ask Monday blank response")
-        used_model = "chatgpt-monday"
-    except Exception as ex:
-        chatgpt_answer = mistral_answer
-        used_model = "mistral-fallback"
+    def event_stream():
+        # 1. Full Mistral answer (blocking)
+        try:
+            output = llm(
+                prompt=prompt,
+                temperature=request.temperature,
+                top_p=request.top_p,
+                max_tokens=request.max_tokens,
+                stop=request.stop or ["</s>", "User:", "Assistant:"],
+            )
+            mistral_answer = output["choices"][0]["text"].strip()
+        except Exception as e:
+            mistral_answer = f"Error from Mistral: {e}"
 
-    return {
-        "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",
-        "object": "chat.completion",
-        "created": int(time.time()),
-        "model": used_model,
-        "choices": [
-            {
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": chatgpt_answer,
-                },
-                "finish_reason": "stop",
-            }
-        ],
-        "usage": {
-            "prompt_tokens": output.get("prompt_tokens", 0),
-            "completion_tokens": output.get("completion_tokens", 0),
-            "total_tokens": output.get("prompt_tokens", 0)
-                             + output.get("completion_tokens", 0),
-        },
-    }
+        # 2. Immediately yield Mistral result as first event
+        yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
+
+        # 3. Now stream ChatGPT’s result, chunk by chunk
+        try:
+            for chunk in ask_monday_stream(prompt):  # must be a generator
+                yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
+        except Exception as e:
+            yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
+    
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
