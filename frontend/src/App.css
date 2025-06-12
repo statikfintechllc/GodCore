@@ -19,6 +19,7 @@ body, html, #root {
   height: 100vh;
   z-index: -2;
   background: url('./Icon_Logo/Background_Image_For_App.png') center center / cover no-repeat;
+  background-attachment: fixed;
 }
 
 .main-content {
@@ -41,25 +42,117 @@ body, html, #root {
   background: rgba(16,20,28,0.95);
   border-right: 2px solid #1a1a22;
   overflow-y: auto;
-  padding: 14px 8px 88px 8px;
+  padding: 14px 8px 32px 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   transition: transform 0.34s cubic-bezier(.57,.21,.69,1.25), box-shadow 0.2s;
   box-shadow: 2px 0 14px #0004;
   height: 100vh;
+  z-index: 101;
 }
 
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
+.sidebar-title {
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: #f4f5fa;
+  margin-bottom: 7px;
+  letter-spacing: 0.5px;
+  padding-left: 4px;
 }
 
+.sidebar-new {
+  padding: 8px 13px;
+  font-size: 1rem;
+  background: #24325a;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  margin-left: 3px;
+  transition: background 0.16s;
+}
+.sidebar-new:hover {
+  background: #354877;
+}
+
+/* Clean, readable chat list */
+.sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+  padding: 8px 7px 8px 10px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  background: rgba(30,33,45,0.93);
+  transition: background 0.15s;
+  user-select: none;
+  outline: none;
+}
+.sidebar-item.active,
+.sidebar-item:focus,
+.sidebar-item:hover {
+  background: #222b40 !important;
+}
+
+.sidebar-label {
+  flex: 1;
+  color: #fafbfc;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  padding-right: 5px;
+}
+.sidebar-count {
+  font-size: 0.96em;
+  color: #fc4e47;
+  min-width: 20px;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Delete button (trash icon) */
+.sidebar-delete {
+  margin-left: 6px;
+  color: #e27474;
+  background: none;
+  border: none;
+  font-size: 1.18em;
+  cursor: pointer;
+  padding: 0 0 0 2px;
+  transition: color 0.13s, background 0.13s;
+  border-radius: 3px;
+  outline: none;
+  height: 28px;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar-delete:hover,
+.sidebar-delete:focus {
+  color: #ff4040;
+  background: rgba(85,0,0,0.12);
+}
+
+/* Sidebar tab for mobile */
 .sidebar-tab-toggle {
   display: none;
 }
 @media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
   .sidebar-tab-toggle {
     display: block;
     position: fixed;
@@ -77,6 +170,7 @@ body, html, #root {
   }
 }
 
+/* Sidebar modal overlay and slide-in on mobile */
 .sidebar-modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -107,6 +201,7 @@ body, html, #root {
   box-shadow: 12px 0 32px #000a;
 }
 
+/* Left persistent history panel */
 .chat-history-panel {
   width: 260px;
   min-width: 180px;
