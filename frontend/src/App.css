@@ -11,7 +11,6 @@ body, html, #root {
   position: relative;
 }
 
-/* Always use z-index: 0 for background: never negative! */
 .app-bg {
   position: fixed;
   inset: 0;
@@ -20,15 +19,34 @@ body, html, #root {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
+  -webkit-background-size: contain;
   background-attachment: scroll;
-  -webkit-background-size: cover;
-  -webkit-background-position: center center;
-  -webkit-background-repeat: no-repeat;
-  -webkit-background-attachment: scroll;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   will-change: opacity, transform;
-  pointer-events: none; /* ensure overlays are clickable */
+  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* Mobile fix: force all contain with !important */
+@media (max-width: 900px) {
+  .app-bg {
+    background-size: contain !important;
+    -webkit-background-size: contain !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+  }
 }
 
 .main-content {
