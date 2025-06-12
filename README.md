@@ -19,7 +19,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 
 # GodCore Llama Mistral-13B Demo
 
-**Currently in the middle of adding a main feature, Currently Fighting Background Imaging for mobile and side-bar accessibility and alignment. As well as, a ChatGPT auto-filter non-api.**
+**Currently in the middle of adding a main feature, and currently Fighting Background Imaging for mobile and side-bar accessibility and alignment. As well as, a ChatGPT auto-filter non-api.**
 
 *V.0.3.0 will be the Background image bug removal for mobile, Proper Alignment of contents in the SideBar on Mobile, as well as proper Hide-away side bar on DeskTop.*
 </div>
