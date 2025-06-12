@@ -19,7 +19,7 @@ body, html, #root {
   background-image: url('./Icon_Logo/Background_Image_For_App.png');
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   background-attachment: scroll;
   -webkit-background-size: cover;
   -webkit-background-position: center center;
