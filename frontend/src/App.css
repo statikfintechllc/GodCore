@@ -1,4 +1,4 @@
-body, html, #root, .app-bg {
+body, html, #root {
   min-height: 100vh;
   min-width: 100vw;
   margin: 0;
@@ -7,15 +7,17 @@ body, html, #root, .app-bg {
   width: 100vw;
   box-sizing: border-box;
   overflow-x: hidden;
+  position: relative;
 }
+
 .app-bg {
-  position: fixed !important;
+  position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   min-width: 100vw;
   min-height: 100vh;
   width: 100vw;
   height: 100vh;
-  z-index: -2;
+  z-index: 0;
   background: url('./Icon_Logo/Background_Image_For_App.png') center center / cover no-repeat fixed;
 }
 
@@ -24,7 +26,7 @@ body, html, #root, .app-bg {
   z-index: 1;
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   align-items: stretch;
   justify-content: center;
