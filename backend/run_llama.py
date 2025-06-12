@@ -23,7 +23,7 @@ import argparse
 import sys
 import json
 
-from backend.ask_monday_handler import ask_monday_stream
+from ask_monday_handler import ask_monday_stream
 
 # Ensure PYTHONPATH is repo root regardless of current dir
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
