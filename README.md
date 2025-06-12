@@ -44,39 +44,34 @@ GodCore/
 ├── LICENSE
 ├── DEV_DIARY.md
 │
-├── frontend/
-│       ├── run_llama.py
-│       ├── start_all.sh
-│       ├── launch_ngrok-UI.sh
-│       ├── ask_monday_handler.py
-│       └── stop_all.sh
+├── backend/
+│    ├── run_llama.py
+│    ├── start_all.sh
+│    ├── launch_ngrok-UI.sh
+│    ├── ask_monday_handler.py
+│    ├── stop_all.sh
+│    └── llama-cpp-python/        
+│         └── ...    # All llama-cpp-python files and folders here
 │
 ├── environment/
-│       ├── install.sh
-│       ├── conda_env.yml
-│       └── requirements.txt
+│         ├── install.sh
+│         ├── conda_env.yml
+│         └── requirements.txt
 │
-├── frontend/
-│   │   ├── package.json
-│   │   └── package-lock.json
-│   │
-│   ├── public/
-│   │   └── index.html
-│   │
-│   ├── src/
-│   │   ├── App.js
-│   │   ├── index.js
-│   │   └── App.css
-│   │
-│   └── node_modules/     # All node_modules are built here
-│       └── ...
-│
-├── llama-cpp-python/        
-│       └── ...           # All llama-cpp-python files and folders here
-│
-└── models/
-        └── Mistral-13B-Instruct/
-                  └── mistral-13b-instruct-v0.1.Q5_K_M.gguf  # Is downloaded by install.sh to GodCore/environment/
+└── frontend/
+    │     ├── package.json
+    │     └── package-lock.json
+    │
+    ├── public/
+    │     └── index.html
+    │
+    ├── src/
+    │     ├── App.js
+    │     ├── index.js
+    │     └── App.css
+    │
+    └── node_modules/
+          └── ...    # All node_modules are built here
 
 ```
 
@@ -90,7 +85,7 @@ cd GodCore
 # 2. Install all dependencies and set up environment
 cd environment && ./install.sh && \
 
-# 3. After install.sh runs it places's your downloaded model file here(Always double check):
+# 3. After install.sh runs it places's your downloaded model file here:(Always double check)
 # /path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf
 
 # 4. Activate the environment
