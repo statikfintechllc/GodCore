@@ -28,22 +28,38 @@ body, html, #root {
   will-change: transform;
 }
 
-/* Mobile/tablet fix for 100% viewport fill on iOS/Android (all sizes) */
+/* --- Mobile/tablet/iOS/Android: force viewport fill and prevent iOS zoom issues --- */
 @media (max-width: 900px), (max-height: 700px) {
   .app-bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw !important;
+    height: 100vh !important;
     min-width: 100vw;
     min-height: 100vh;
     background-image: url('./Icon_Logo/Background_Image_For_App.png');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 100vw 100vh;      /* <<== this is the real secret */
-    background-attachment: scroll;     /* disables weird zoom on iOS */
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-attachment: scroll !important;    /* << iOS/Android must have this to prevent jump */
     z-index: 0;
+    -webkit-background-size: cover !important;
+    -webkit-backface-visibility: hidden;
   }
+}
+
+/* Prevent parent containers from clipping or causing scroll */
+body, html, #root {
+  min-height: 100vh;
+  min-width: 100vw;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .main-content {
