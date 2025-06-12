@@ -166,7 +166,7 @@ function App() {
                 title="Delete chat"
                 onClick={e => handleDeleteChat(sid, e)}
                 tabIndex={-1}
-              >🗑</button>
+              >🗑️</button>
             </div>
           ))}
       </div>
