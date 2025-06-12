@@ -1,3 +1,15 @@
+#!/usr/bin/env python3
+
+# ─────────────────────────────────────────────────────────────
+# ⚠️ GodCore Open-Use | Commercial Use allowed
+# Built under the GodCore Open-Use License v.0.3.0
+# © 2025 StatikFintechLLC / GodCore Project
+# Contact: ascend.gremlin@gmail.com
+# ─────────────────────────────────────────────────────────────
+
+# GodCore v.0.3.0 :: Module Integrity Directive
+# This script is a component of the GodCore system, under Alpha expansion.
+
 import os
 import time
 import uuid
