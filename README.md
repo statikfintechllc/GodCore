@@ -31,7 +31,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 
 ---
 
-> Documentation is updated frequently. If you see an issue, submit a PR or open an issue!
+*Documentation is updated frequently. If you see an issue, submit a PR or open an issue!*
 
 ---
 
@@ -125,7 +125,7 @@ cd scripts && \
 ```
 
 ## **Manual Start** *(Advanced/Debug)*
-> *Soon debunk, and bug free*
+*Soon debunk, and bug free*
 
 > Start backend only:
 
