@@ -11,14 +11,39 @@ body, html, #root {
 }
 
 .app-bg {
-  position: fixed;
+  position: fixed;                  /* Ensures background is always behind */
   top: 0; left: 0; right: 0; bottom: 0;
-  min-width: 100vw;
-  min-height: 100vh;
   width: 100vw;
   height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
   z-index: 0;
-  background: url('./Icon_Logo/Background_Image_For_App.png') center center / cover no-repeat fixed;
+  background-image: url('./Icon_Logo/Background_Image_For_App.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+
+  /* For iOS mobile Safari - fixes viewport issues */
+  -webkit-background-size: cover;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Fix background for small devices (iOS/Android) */
+@media (max-width: 700px), (max-height: 700px) {
+  .app-bg {
+    background-attachment: scroll;     /* Prevents weird zoom behavior */
+    min-width: 100vw;
+    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
+    left: 0; top: 0; right: 0; bottom: 0;
+    position: fixed;
+    background-position: center center;
+    background-size: cover;
+    z-index: 0;
+  }
 }
 
 .main-content {
