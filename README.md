@@ -58,6 +58,11 @@ GodCore/
 │         ├── conda_env.yml
 │         └── requirements.txt
 │
+├── data/
+│    ├── chat_responses/
+│    │    └── ...    # All chatgpt files here
+│    └── screenshots/ 
+│         └── ...    # All screenshots here
 └── frontend/
     │     ├── package.json
     │     └── package-lock.json

@@ -21,15 +21,14 @@ from PIL import ImageGrab, Image
 from datetime import datetime
 from pathlib import Path
 
-from backend.globals import logger
-from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
-from memory.log_history import log_event
+#from memory.vector_store.embedder import embed_text, package_embedding, inject_watermark
+#from memory.log_history import log_event
 
-WATERMARK = "source:GremlinGPT"
-ORIGIN = "ask_monday_handler"
+#WATERMARK = "source:GremlinGPT"
+#ORIGIN = "ask_monday_handler"
 
-SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
-SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+#SCREENSHOT_DIR = Path(os.path.expanduser("data/logs/screenshots"))
+#SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 
 MEMORY_DIR = Path(os.path.expanduser("data/logs/chat_responses"))
 MEMORY_DIR.mkdir(parents=True, exist_ok=True)
@@ -42,7 +41,7 @@ def launch_chatgpt():
         if system == "Darwin":
             subprocess.Popen(["open", "-a", "ChatGPT"])
         elif system == "Linux":
-            subprocess.Popen(["chatgpt"])
+            subprocess.Popen(["gdk-launch", "chatgpt"])
         elif system == "Windows":
             subprocess.Popen(["start", "", "ChatGPT"], shell=True)
         else:
