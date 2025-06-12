@@ -81,7 +81,7 @@ def ask_monday_stream(prompt, interrupt_checker=None):
         text = pytesseract.image_to_string(screenshot)
         if text and text.strip() and text != last_text:
             last_text = text
-            yield text.strip()
+            yield json.dumps({"model": "chatgpt", "delta": text.strip()}) + "\n"
         pyautogui.scroll(-500)
     yield "[END_OF_RESPONSE]"
 
