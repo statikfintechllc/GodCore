@@ -45,24 +45,26 @@ GodCore/
 ├── DEV_DIARY.md
 │
 ├── backend/
+│    │
 │    ├── run_llama.py
 │    ├── start_all.sh
 │    ├── launch_ngrok-UI.sh
 │    ├── ask_monday_handler.py
 │    ├── stop_all.sh
-│    └── llama-cpp-python/        
-│         └── ...    # All llama-cpp-python files and folders here
+│    │
+│    ├── llama-cpp-python/        
+│    │    └── ...    # All llama-cpp-python files and folders here
+│    └── logs/
+│         ├── chat_responses/
+│         │   └── ...    # All chatgpt files here
+│         └── screenshots/ 
+│             └── ...    # All screenshots here
 │
 ├── environment/
 │         ├── install.sh
 │         ├── conda_env.yml
 │         └── requirements.txt
 │
-├── data/
-│    ├── chat_responses/
-│    │    └── ...    # All chatgpt files here
-│    └── screenshots/ 
-│         └── ...    # All screenshots here
 └── frontend/
     │     ├── package.json
     │     └── package-lock.json
