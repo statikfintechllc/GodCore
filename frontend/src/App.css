@@ -9,12 +9,14 @@ body, html, #root {
   box-sizing: border-box;
   overflow-x: hidden;
   position: relative;
+  background: #000;
 }
 
 .app-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
+  background-color: #000;
   background-image: url('./Icon_Logo/Background_Image_For_App.png');
   background-position: center center;
   background-repeat: no-repeat;
