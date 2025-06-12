@@ -111,6 +111,8 @@ sudo apt install qrencode
 
 npm install --save-dev cross-env
 
+sudo apt install libgtk-3-bin
+
 conda deactivate
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"
