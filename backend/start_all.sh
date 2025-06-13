@@ -1,12 +1,8 @@
 #!/bin/zsh
 
-cd "$(dirname "$0")/.."
-import sys, os
-sys.path.insert(0, os.path.join(os.getcwd(), "backend"))
+set -e  # Exit on any error
 
-set -e
-
-# Always run from backend directory
+# Go to backend directory
 cd "$(dirname "$0")"
 
 # --- Config ---
