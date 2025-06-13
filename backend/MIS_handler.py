@@ -27,7 +27,7 @@ import json
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
-    
+
 os.environ['PYTHONPATH'] = REPO_ROOT
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
@@ -87,51 +87,51 @@ def chat_completion(request: ChatRequest):
             [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
         ) + "Assistant:"
     )
-        # 1. Full Mistral answer (blocking, robust to token/context errors)
-        try:
-            output = llm(
-                prompt=prompt,
-                temperature=request.temperature,
-                top_p=request.top_p,
-                max_tokens=request.max_tokens,
-                stop=request.stop or ["</s>", "User:", "Assistant:"],
-            )
-            mistral_answer = output["choices"][0]["text"].strip()
-        except Exception as e:
-            # Optionally: try to reload model on token/context error, then retry inference ONCE
-            mistral_answer = f"[Mistral inference error: {e}]"
-            if "token" in str(e).lower() or "context" in str(e).lower():
-                try:
-                    llm = Llama(
-                        model_path=MODEL_PATH,
-                        n_ctx=4096,
-                        n_gpu_layers=35,
-                        main_gpu=1,
-                        TENSOR_SPLIT=[16, 19],
-                        n_threads=24,
-                        use_mmap=True,
-                        use_mlock=False,
-                        verbose=True,
-                    )
-                    output = llm(
-                        prompt=prompt,
-                        temperature=request.temperature,
-                        top_p=request.top_p,
-                        max_tokens=request.max_tokens,
-                        stop=request.stop or ["</s>", "User:", "Assistant:"],
-                    )
-                    mistral_answer = output["choices"][0]["text"].strip()
-                except Exception as e2:
-                    mistral_answer = f"[Mistral reload error: {e2}]"
+    # Full Mistral answer (blocking, robust to token/context errors)
+    try:
+        output = llm(
+            prompt=prompt,
+            temperature=request.temperature,
+            top_p=request.top_p,
+            max_tokens=request.max_tokens,
+            stop=request.stop or ["</s>", "User:", "Assistant:"],
+        )
+        mistral_answer = output["choices"][0]["text"].strip()
+    except Exception as e:
+        # Optionally: try to reload model on token/context error, then retry inference ONCE
+        mistral_answer = f"[Mistral inference error: {e}]"
+        if "token" in str(e).lower() or "context" in str(e).lower():
+            try:
+                llm = Llama(
+                    model_path=MODEL_PATH,
+                    n_ctx=4096,
+                    n_gpu_layers=35,
+                    main_gpu=1,
+                    TENSOR_SPLIT=[16, 19],
+                    n_threads=24,
+                    use_mmap=True,
+                    use_mlock=False,
+                    verbose=True,
+                )
+                output = llm(
+                    prompt=prompt,
+                    temperature=request.temperature,
+                    top_p=request.top_p,
+                    max_tokens=request.max_tokens,
+                    stop=request.stop or ["</s>", "User:", "Assistant:"],
+                )
+                mistral_answer = output["choices"][0]["text"].strip()
+            except Exception as e2:
+                mistral_answer = f"[Mistral reload error: {e2}]"
 
-        # 2. Immediately yield Mistral result as first event
-        yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
-
+    # Immediately yield Mistral result as first event (no streaming)
+    yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8000, help="Port to run server on")
+    parser.add_argument('--host', type=str, default="0.0.0.0", help="Host to run server on")
     args = parser.parse_args()
 
-    print(f"🚀 Devin-compatible API ready on http://localhost:{args.port}")
-    uvicorn.run("run_llama:app", host="0.0.0.0", port=args.port)
+    print(f"🚀 Devin-compatible API ready on http://{args.host}:{args.port}")
+    uvicorn.run("run_llama:app", host=args.host, port=args.port)

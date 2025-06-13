@@ -21,14 +21,18 @@ from PIL import ImageGrab
 from datetime import datetime, timedelta
 from pathlib import Path
 import json
+import argparse
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse, JSONResponse
+import uvicorn
 
 SESSION_WINDOWS = {}
 
 def list_chatgpt_windows():
     """Return a dict mapping window IDs to titles for all ChatGPT windows."""
     out = subprocess.check_output(["wmctrl", "-lx"]).decode()
-    # Example output line:
-    # 0x04600005 -1 N/A   chatgpt.Chatgpt  hostname  ChatGPT
     return {
         line.split()[0]: line for line in out.strip().splitlines()
         if "chatgpt" in line.lower()
@@ -40,11 +44,9 @@ def focus_window(window_id):
 
 def launch_chatgpt_for_session(session_id):
     """Ensure ChatGPT instance for session_id exists, focus it, else launch and bind."""
-    # Already launched?
     if session_id in SESSION_WINDOWS and SESSION_WINDOWS[session_id]:
         focus_window(SESSION_WINDOWS[session_id])
         return
-    # Else: launch new and bind
     before = set(list_chatgpt_windows().keys())
     subprocess.Popen(["gtk-launch", "chatgpt"])
     time.sleep(4)
@@ -52,7 +54,6 @@ def launch_chatgpt_for_session(session_id):
     new_windows = set(after.keys()) - before
     if not new_windows:
         raise RuntimeError("Failed to launch new ChatGPT window")
-    # Bind to session_id
     win_id = list(new_windows)[0]
     SESSION_WINDOWS[session_id] = win_id
     focus_window(win_id)
@@ -64,9 +65,6 @@ def paste_and_enter(text):
     pyautogui.press("enter")
 
 def ask_monday_stream(prompt, session_id=None, interrupt_checker=None):
-    """
-    Stream OCR'd content block by block as ChatGPT responds, bound to session window.
-    """
     print(f"[ASK] Asking ChatGPT (session {session_id}): {prompt}")
     launch_chatgpt_for_session(session_id or "default")
     paste_and_enter(prompt)
@@ -105,8 +103,43 @@ def handle(task):
     session_id = task.get("session_id", None)
     return ask_monday(prompt, session_id=session_id)
 
+# ==== FastAPI Server for Web API ====
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    return {"message": "ChatGPT handler is live. POST to /v1/chat/completions"}
+
+@app.post("/v1/chat/completions")
+async def chat_completions(request: Request):
+    try:
+        body = await request.json()
+        prompt = body.get("target") or body.get("text") or ""
+        session_id = body.get("session_id", None)
+        # Streaming response
+        async def streamer():
+            for chunk in ask_monday_stream(prompt, session_id=session_id):
+                yield f"data: {chunk}\n\n"
+        return StreamingResponse(streamer(), media_type="text/event-stream")
+    except Exception as e:
+        async def errstream():
+            yield f"data: [ERROR: {str(e)}]\n\n"
+        return StreamingResponse(errstream(), media_type="text/event-stream")
+
 if __name__ == "__main__":
-    example = "Explain EMA crossover for penny stocks under 10 dollars."
-    session_id = "demo-session"
-    for chunk in ask_monday_stream(example, session_id=session_id):
-        print(chunk)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=8080, help="Port to run server on")
+    parser.add_argument('--host', type=str, default="0.0.0.0", help="Host to run server on")
+    args = parser.parse_args()
+
+    print(f"🚀 ChatGPT handler API ready on http://{args.host}:{args.port}")
+    uvicorn.run("GPT_handler:app", host=args.host, port=args.port)

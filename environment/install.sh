@@ -1,11 +1,16 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
-set -e
+set -eu
 
 ENV_NAME="runmistral"
 
+if ! command -v conda &>/dev/null; then
+    echo "[ERROR] conda not found. Please install Miniconda or Anaconda first."
+    exit 1
+fi
+
 echo "\n[*] Checking if conda env '$ENV_NAME' exists..."
-if conda info --envs | grep -q "^$ENV_NAME\s"; then
+if conda info --envs | awk '{print $1}' | grep -qx "$ENV_NAME"; then
     echo "[*] Conda env '$ENV_NAME' already exists. Activating and upgrading packages..."
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate $ENV_NAME
@@ -51,7 +56,7 @@ echo "[*] Checking for Mistral-13B model..."
 mkdir -p "$MODEL_DIR"
 if [ ! -f "$MODEL_PATH" ]; then
     echo "[*] Downloading Mistral-13B-Instruct Q5_K_M GGUF model..."
-    curl -L --output "$MODEL_PATH" "$MODEL_URL"
+    curl -L --output "$MODEL_PATH" "$MODEL_URL" || { echo "Model download failed!"; exit 2; }
     echo "[*] Model downloaded to $MODEL_PATH"
 else
     echo "[*] Model already exists at $MODEL_PATH"
@@ -67,18 +72,13 @@ cd ../llama-cpp-python
 
 if [ -f pyproject.toml ]; then
     echo "[*] Uninstalling previous llama-cpp-python wheel (if any)..."
-    
     pip uninstall llama-cpp-python -y || true
-
     rm -rf build/ dist/ llama_cpp_python.egg-info/
-
     export CUDA_HOME=/usr/local/cuda-12.4
     export PATH=/usr/local/cuda-12.4/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
-
     echo "[*] Building llama-cpp-python with GGML_CUDA=on..."
     CMAKE_ARGS="-DGGML_CUDA=on -DLLAVA_BUILD=on -DCMAKE_CUDA_ARCHITECTURES=86" pip install . --force-reinstall --no-cache-dir
-
     echo "[*] Wheel built, testing system info:"
     python -c "from llama_cpp import llama_print_system_info; llama_print_system_info()"
 else
@@ -88,12 +88,15 @@ fi
 
 cd ../frontend
 
+if ! command -v npm &>/dev/null; then
+    echo "[ERROR] npm not found. Please install Node.js and npm."
+    exit 1
+fi
+
 npm install
 
 conda install -c conda-forge gxx -y # installs latest GCC toolchain (may be called gxx_linux-64)
-
 conda install -c conda-forge libstdcxx-ng=13.2.0 -y
-
 conda install -c conda-forge gcc=13.2.0 gxx=13.2.0 -y
 
 # Remove any broken conda libstdc++ copy (will re-link)
@@ -116,4 +119,3 @@ sudo apt install libgtk-3-bin
 conda deactivate
 
 echo "\n[*] Install complete. Activate with: conda activate $ENV_NAME"
-

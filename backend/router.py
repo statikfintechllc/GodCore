@@ -21,7 +21,7 @@ import argparse
 
 # Where to find each backend server
 MISTRAL_URL = "http://localhost:8000/v1/chat/completions"
-MONDAY_URL = "http://localhost:8088/v1/chat/completions"
+MONDAY_URL = "http://localhost:8080/v1/chat/completions"
 
 app = FastAPI()
 app.add_middleware(
@@ -80,7 +80,8 @@ async def proxy_both(request: Request):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=9000, help="Port to run router on")
+    parser.add_argument("--port", type=int, default=8088, help="Port to run router on")
+    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run router on")
     args = parser.parse_args()
-    print(f"🚦 GodCore Router ready on http://localhost:{args.port}")
-    uvicorn.run("router:app", host="0.0.0.0", port=args.port)
+    print(f"🚦 GodCore Router ready on http://{args.host}:{args.port}")
+    uvicorn.run("router:app", host=args.host, port=args.port)

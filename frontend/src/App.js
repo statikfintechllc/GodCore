@@ -15,6 +15,9 @@ function getBubbleClass(role, isMonday) {
   if (isMonday) return "chat-bubble monday-bubble";
   return "chat-bubble ai-bubble";
 }
+function getModelLabel(isMonday) {
+  return isMonday ? "High-Power" : "Local-Power";
+}
 function CodeBlock({ className, children }) {
   return (
     <pre className={className || "block"} style={{ background: "#14141a", borderRadius: 10, padding: 12, overflowX: "auto" }}>
@@ -374,7 +377,7 @@ function App() {
 
         {/* Chat main area */}
         <div className="chat-main-area">
-          <div className="header" style={{ background: "none" }}>
+          <div className="header">
             <img src={AppIcon} alt="App Logo" className="app-logo" />
             <span className="main-title">
               GodCore-The Experiment, yet <span className="smart-red-shadow">Smart</span>
@@ -383,6 +386,16 @@ function App() {
           <div className="chat-history">
             {(sessions[currentSession]?.messages || []).map((msg, idx) => (
               <div key={idx} className={getBubbleClass(msg.role, msg.monday)}>
+                {msg.role === "assistant" && (
+                  <div className="model-label" style={{
+                    fontSize: "0.95rem",
+                    fontWeight: "bold",
+                    color: msg.monday ? "#a80000" : "#188f1e",
+                    marginBottom: 2
+                  }}>
+                    {getModelLabel(msg.monday)}
+                  </div>
+                )}
                 <ReactMarkdown
                   children={msg.content}
                   remarkPlugins={[remarkGfm]}
@@ -423,8 +436,8 @@ function App() {
               style={{ marginLeft: 8, borderRadius: 5, padding: "6px 8px", background: "#19191e", color: "#fff" }}
               aria-label="Choose model"
             >
-              <option value="monday">Monday (ChatGPT, Live)</option>
-              <option value="mistral">Mistral (Fast, One-shot)</option>
+              <option value="monday">High-Power (ChatGPT, Live)</option>
+              <option value="mistral">Local-Power (Mistral, Fast, One-shot)</option>
             </select>
           </form>
         </div>
