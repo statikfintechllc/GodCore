@@ -5,7 +5,7 @@ export PYTHONPATH="$PWD"
 
 pkill -f react-scripts
 pkill -f node        
-pkill -f run_llama.py
+pkill -f router.py
 lsof -ti:3000 | xargs -r kill -9
 lsof -ti:8000 | xargs -r kill -9
 pkill -f ngrok
