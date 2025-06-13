@@ -23,7 +23,6 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 **Stay tuned if intrigued**
 
 *V.0.3.0 will be the Background image bug removal for mobile, Proper Alignment of contents in the SideBar on Mobile, as well as proper Hide-away side bar on DeskTop. And The Addition Of the Monday Handler.*
-</div>
 
 **Local LLM (llama.cpp) with Mistral-13B model**
 > FastAPI backend (OpenAI-compatible route: `/v1/chat/completions`)
@@ -37,6 +36,7 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 ---
 
 ## **Directory Layout**
+</div>
 
 ```text
 GodCore/
