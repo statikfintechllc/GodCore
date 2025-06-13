@@ -89,6 +89,7 @@ GodCore/
     ├── src/
     │     │
     │     ├── App.js
+    │     ├── setupProxy.js
     │     ├── index.js
     │     └── App.css
     │
