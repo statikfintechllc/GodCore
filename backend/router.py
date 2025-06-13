@@ -23,7 +23,7 @@ from llama_cpp import Llama
 import uvicorn
 import argparse
 
-from ask_monday_handler import ask_monday_stream
+from GPT_handler import ask_monday_stream
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
