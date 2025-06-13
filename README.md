@@ -46,10 +46,10 @@ GodCore/
 │
 ├── backend/
 │    │
-│    ├── run_llama.py
-│    ├── start_all.sh
 │    ├── launch_ngrok-UI.sh
-│    ├── ask_monday_handler.py
+│    ├── start_all.sh
+│    ├── GPT_handler.py
+│    ├── router.py
 │    ├── stop_all.sh
 │    │
 │    ├── llama-cpp-python/        
