@@ -23,8 +23,6 @@ import argparse
 import sys
 import json
 
-from ask_monday_handler import ask_monday_stream
-
 # Ensure PYTHONPATH is repo root regardless of current dir
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if REPO_ROOT not in sys.path:
@@ -54,7 +52,7 @@ llm = Llama(
     n_ctx=4096,
     n_gpu_layers=35,
     main_gpu=1,         # 0 = first GPU, or 1 = second GPU
-    TENSOR_SPLIT=[16, 19],
+    TENSOR_SPLIT=[20,20],
     n_threads=24,
     use_mmap=True,
     use_mlock=False,
@@ -89,10 +87,6 @@ def chat_completion(request: ChatRequest):
             [f"{msg.role.capitalize()}: {msg.content.strip()}\n" for msg in request.messages]
         ) + "Assistant:"
     )
-
-    def event_stream():
-        global llm  # Required if you want to reset/reload the model
-
         # 1. Full Mistral answer (blocking, robust to token/context errors)
         try:
             output = llm(
@@ -133,15 +127,6 @@ def chat_completion(request: ChatRequest):
         # 2. Immediately yield Mistral result as first event
         yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
 
-        # 3. Now stream ChatGPT’s result, chunk by chunk
-        try:
-            for chunk in ask_monday_stream(prompt):
-                yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
-        except Exception as e:
-            yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
-    
-    # Return StreamingResponse from the route function
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
