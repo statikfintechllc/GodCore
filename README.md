@@ -56,6 +56,9 @@ GodCore/
 │    │
 │    └── logs/
 │         │
+│         ├── backend.log
+│         ├── frontend.log
+│         │
 │         ├── chat_responses/
 │         │   └── ...    # All chatgpt files here
 │         │
