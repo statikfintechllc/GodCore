@@ -11,32 +11,29 @@
 # This script is a component of the GodCore system, under Alpha expansion.
 
 import os
+import sys
 import time
 import uuid
-from fastapi import FastAPI
+import json
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
 import argparse
-import sys
-import json
 
 from ask_monday_handler import ask_monday_stream
 
-# Ensure PYTHONPATH is repo root regardless of current dir
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 os.environ["PYTHONPATH"] = REPO_ROOT
-# --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
 os.environ["GGML_CUDA_FORCE_MMQ"] = "1"
 os.environ["GGML_CUDA_PEER_ACCESS"] = "0,1"
 
-# --- FastAPI + CORS ---
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -47,13 +44,12 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# --- Model Config ---
-MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"  # CHANGE ME
+MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
     n_gpu_layers=35,
-    main_gpu=1,  # 0 = first GPU, or 1 = second GPU
+    main_gpu=1,
     TENSOR_SPLIT=[16, 19],
     n_threads=24,
     use_mmap=True,
@@ -61,11 +57,9 @@ llm = Llama(
     verbose=True,
 )
 
-
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     content: str
-
 
 class ChatRequest(BaseModel):
     model: str
@@ -74,21 +68,93 @@ class ChatRequest(BaseModel):
     top_p: Optional[float] = 0.9
     max_tokens: Optional[int] = 16184
     stop: Optional[List[str]] = None
-
+    session_id: Optional[str] = None  # Used for Monday session binding
 
 @app.get("/")
 def root():
     return {
-        "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
+        "message": "GodCore API live. Use /v1/chat/completions/[mistral|monday] endpoints."
     }
 
+@app.post("/v1/chat/completions/mistral")
+def completions_mistral(request: ChatRequest):
+    prompt = (
+        "".join(
+            [
+                f"{msg.role.capitalize()}: {msg.content.strip()}\n"
+                for msg in request.messages
+            ]
+        )
+        + "Assistant:"
+    )
+    global llm
+    try:
+        output = llm(
+            prompt=prompt,
+            temperature=request.temperature,
+            top_p=request.top_p,
+            max_tokens=request.max_tokens,
+            stop=request.stop or ["</s>", "User:", "Assistant:"],
+        )
+        mistral_answer = output["choices"][0]["text"].strip()
+        return {"model": "mistral", "content": mistral_answer}
+    except Exception as e:
+        mistral_answer = f"[Mistral inference error: {e}]"
+        if "token" in str(e).lower() or "context" in str(e).lower():
+            try:
+                llm = Llama(
+                    model_path=MODEL_PATH,
+                    n_ctx=4096,
+                    n_gpu_layers=35,
+                    main_gpu=1,
+                    TENSOR_SPLIT=[16, 19],
+                    n_threads=24,
+                    use_mmap=True,
+                    use_mlock=False,
+                    verbose=True,
+                )
+                output = llm(
+                    prompt=prompt,
+                    temperature=request.temperature,
+                    top_p=request.top_p,
+                    max_tokens=request.max_tokens,
+                    stop=request.stop or ["</s>", "User:", "Assistant:"],
+                )
+                mistral_answer = output["choices"][0]["text"].strip()
+                return {"model": "mistral", "content": mistral_answer}
+            except Exception as e2:
+                mistral_answer = f"[Mistral reload error: {e2}]"
+        return {"model": "mistral", "content": mistral_answer}
 
 from fastapi.responses import StreamingResponse
 
+@app.post("/v1/chat/completions/monday")
+def completions_monday(request: ChatRequest):
+    # ---- Validate session_id presence ----
+    if not request.session_id or not isinstance(request.session_id, str):
+        raise HTTPException(status_code=400, detail="Missing or invalid session_id for Monday binding.")
+    prompt = (
+        "".join(
+            [
+                f"{msg.role.capitalize()}: {msg.content.strip()}\n"
+                for msg in request.messages
+            ]
+        )
+        + "Assistant:"
+    )
+
+    def stream():
+        try:
+            # Always forward session_id to handler
+            for chunk in ask_monday_stream(prompt, session_id=request.session_id):
+                yield json.dumps({"model": "monday", "delta": chunk}) + "\n"
+        except Exception as e:
+            yield json.dumps({"model": "monday", "delta": f"[ERROR: {e}]"}) + "\n"
+    return StreamingResponse(stream(), media_type="text/event-stream")
 
 @app.post("/v1/chat/completions")
-def chat_completion(request: ChatRequest):
-    # Build prompt
+def completions_both(request: ChatRequest):
+    # This endpoint runs both, for legacy/mux mode
     prompt = (
         "".join(
             [
@@ -100,9 +166,8 @@ def chat_completion(request: ChatRequest):
     )
 
     def event_stream():
-        global llm  # Required if you want to reset/reload the model
-
-        # 1. Full Mistral answer (blocking, robust to token/context errors)
+        global llm
+        # ---- Mistral first ----
         try:
             output = llm(
                 prompt=prompt,
@@ -113,50 +178,19 @@ def chat_completion(request: ChatRequest):
             )
             mistral_answer = output["choices"][0]["text"].strip()
         except Exception as e:
-            # Optionally: try to reload model on token/context error, then retry inference ONCE
             mistral_answer = f"[Mistral inference error: {e}]"
-            if "token" in str(e).lower() or "context" in str(e).lower():
-                try:
-                    llm = Llama(
-                        model_path=MODEL_PATH,
-                        n_ctx=4096,
-                        n_gpu_layers=35,
-                        main_gpu=1,
-                        TENSOR_SPLIT=[16, 19],
-                        n_threads=24,
-                        use_mmap=True,
-                        use_mlock=False,
-                        verbose=True,
-                    )
-                    output = llm(
-                        prompt=prompt,
-                        temperature=request.temperature,
-                        top_p=request.top_p,
-                        max_tokens=request.max_tokens,
-                        stop=request.stop or ["</s>", "User:", "Assistant:"],
-                    )
-                    mistral_answer = output["choices"][0]["text"].strip()
-                except Exception as e2:
-                    mistral_answer = f"[Mistral reload error: {e2}]"
-
-        # 2. Immediately yield Mistral result as first event
         yield json.dumps({"model": "mistral", "content": mistral_answer}) + "\n"
-
-        # 3. Now stream ChatGPT’s result, chunk by chunk
+        # ---- Monday streaming (session_id optional for legacy) ----
         try:
-            for chunk in ask_monday_stream(prompt):
-                yield json.dumps({"model": "chatgpt", "delta": chunk}) + "\n"
+            for chunk in ask_monday_stream(prompt, session_id=request.session_id):
+                yield json.dumps({"model": "monday", "delta": chunk}) + "\n"
         except Exception as e:
-            yield json.dumps({"model": "chatgpt", "delta": f"[ERROR: {e}]"})
-
-    # Return StreamingResponse from the route function
+            yield json.dumps({"model": "monday", "delta": f"[ERROR: {e}]"}) + "\n"
     return StreamingResponse(event_stream(), media_type="text/event-stream")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8000, help="Port to run server on")
     args = parser.parse_args()
-
-    print(f"🚀 Devin-compatible API ready on http://localhost:{args.port}")
+    print(f"🚀 GodCore API ready on http://localhost:{args.port}")
     uvicorn.run("run_llama:app", host="0.0.0.0", port=args.port)
