@@ -18,7 +18,9 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   </a>
 
 # GodCore Llama Mistral-13B Expirament
-> **Currently in the middle of adding a main feature — ChatGPT auto-filter non-api.**
+> **Currently in the middle of adding a main feature — Switch between Local and "Cloud" ChatGPT Chatting non-api.**
+
+**Stay tuned if intrigued**
 
 *V.0.3.0 will be the Background image bug removal for mobile, Proper Alignment of contents in the SideBar on Mobile, as well as proper Hide-away side bar on DeskTop. And The Addition Of the Monday Handler.*
 </div>
