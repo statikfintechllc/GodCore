@@ -71,4 +71,5 @@
 
 **If you’re stuck, open an issue. If you fixed something, PR your solution so the next person doesn’t have to suffer.**
 
-*“I killed this in 3 hours so you don’t have to lose 3 days. You’re welcome.”*
+> *“I killed this in 3 hours so you don’t have to lose 3 days. You’re welcome.”*
+*StatikFinTech, LLC*
