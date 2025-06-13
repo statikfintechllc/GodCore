@@ -9,14 +9,16 @@ set -e
 # --- Config ---
 ENV_NAME="runmistral"
 BACKEND_DIR="$(pwd)"
-FRONTEND_DIR="$BACKEND_DIR/frontend"
-BACKEND_LOG="$BACKEND_DIR/run_llama.log"
+BACKEND_PORT=8000
+FRONTEND_PORT=3000
+FRONTEND_DIR="$(dirname "$BACKEND_DIR")/frontend"
+BACKEND_LOG="$BACKEND_DIR/backend.log"
 FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
-BACKEND_FILE="$BACKEND_DIR/run_llama.py"
+BACKEND_FILE="$BACKEND_DIR/router.py"
 
 # --- Function: Start Backend (run_llama.py) ---
 start_backend() {
-    echo "\n[*] Starting backend (run_llama.py)..."
+    echo "\n[*] Starting backend (router.py)..."
     cd "$BACKEND_DIR"
     if [ ! -f "$BACKEND_FILE" ]; then
         echo "[FATAL] Backend file $BACKEND_FILE not found! Aborting." >&2
