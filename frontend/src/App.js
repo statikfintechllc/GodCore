@@ -23,6 +23,25 @@ function CodeBlock({ className, children }) {
   );
 }
 
+// Utility for streaming JSONL from Monday/ChatGPT backend
+async function* streamJSONL(response) {
+  const decoder = new TextDecoder();
+  const reader = response.body.getReader();
+  let buffer = "";
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let lines = buffer.split("\n");
+    buffer = lines.pop();
+    for (let line of lines) {
+      line = line.trim();
+      if (line) yield line;
+    }
+  }
+  if (buffer.trim()) yield buffer.trim();
+}
+
 function App() {
   // Responsive mobile state
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
@@ -48,12 +67,20 @@ function App() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Model picker state
+  const [targetModel, setTargetModel] = useState("monday");
+
   // Ensure at least one session exists
   useEffect(() => {
     if (!sessions[currentSession]) {
       setSessions(prev => ({
         ...prev,
-        [currentSession]: { title: ts(), created: Date.now(), messages: [] }
+        [currentSession]: {
+          title: ts(),
+          created: Date.now(),
+          messages: [],
+          session_id: currentSession // Store session_id here
+        }
       }));
     }
   }, [currentSession, sessions]);
@@ -68,29 +95,63 @@ function App() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [sessions, currentSession]);
 
+  // Message appenders
   const appendMsg = (msg) => {
     setSessions(prev => {
       const updated = { ...prev };
-      const session = updated[currentSession] || { title: ts(), created: Date.now(), messages: [] };
+      const session = updated[currentSession] || {
+        title: ts(),
+        created: Date.now(),
+        messages: [],
+        session_id: currentSession
+      };
       session.messages = [...(session.messages || []), msg];
       updated[currentSession] = session;
       return updated;
     });
   };
 
-  // Delete chat (with correct logic)
+  // Used by streaming handler to update last assistant message "live"
+  const updateLastAssistantMsg = (content, monday) => {
+    setSessions(prev => {
+      const updated = { ...prev };
+      const session = updated[currentSession] || {
+        title: ts(),
+        created: Date.now(),
+        messages: [],
+        session_id: currentSession
+      };
+      const idx = (session.messages || []).map(m => m.role).lastIndexOf("assistant");
+      if (idx >= 0) {
+        session.messages = [
+          ...session.messages.slice(0, idx),
+          { role: "assistant", content, monday }
+        ];
+      } else {
+        session.messages = [...(session.messages || []), { role: "assistant", content, monday }];
+      }
+      updated[currentSession] = session;
+      return updated;
+    });
+  };
+
+  // Delete chat
   const handleDeleteChat = (sid, e) => {
     e.stopPropagation();
     setSessions(prev => {
       const updated = { ...prev };
       delete updated[sid];
-      // If current chat is deleted, pick another (or make new)
       let newCurrent = currentSession;
       if (sid === currentSession) {
         const remaining = Object.keys(updated);
         newCurrent = remaining.length ? remaining[0] : makeId();
         if (!updated[newCurrent]) {
-          updated[newCurrent] = { title: ts(), created: Date.now(), messages: [] };
+          updated[newCurrent] = {
+            title: ts(),
+            created: Date.now(),
+            messages: [],
+            session_id: newCurrent
+          };
         }
       }
       setCurrentSession(newCurrent);
@@ -98,17 +159,16 @@ function App() {
     });
   };
 
-  // Chat POST
-  const handleSend = async (e) => {
+  // ---- Mistral (NO streaming, normal POST) ----
+  const handleSendMistral = async (e) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
     const userMsg = { role: "user", content: input };
     appendMsg(userMsg);
     setInput("");
     setLoading(true);
-
     try {
-      const res = await fetch("/v1/chat/completions", {
+      const res = await fetch("http://localhost:8000/v1/chat/completions/mistral", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -118,23 +178,95 @@ function App() {
       });
       const data = await res.json();
       let msgContent =
-        data?.choices && data.choices[0] && data.choices[0].message
-          ? data.choices[0].message.content
-          : "API error: No response from backend.";
-      const monday = (data.model && data.model.toLowerCase().includes("monday"));
-      appendMsg({ role: "assistant", content: msgContent, monday });
+        data?.content
+          ? data.content
+          : "API error: No response from Mistral backend.";
+      appendMsg({ role: "assistant", content: msgContent, monday: false });
     } catch (err) {
-      appendMsg({ role: "assistant", content: "API error: " + err.message });
+      appendMsg({ role: "assistant", content: "API error: " + err.message, monday: false });
     } finally {
       setLoading(false);
     }
   };
 
-  // New chat session
+  // ---- Monday (ChatGPT, streaming JSONL) ----
+  const handleSendMonday = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+    const userMsg = { role: "user", content: input };
+    appendMsg(userMsg);
+    setInput("");
+    setLoading(true);
+
+    let accumulated = "";
+    let gotChunk = false;
+    let errorMsg = null;
+
+    // Use actual session_id stored on the session object
+    const session_id = sessions[currentSession]?.session_id || currentSession;
+
+    try {
+      const res = await fetch("/v1/chat/completions/monday", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "monday",
+          session_id,
+          messages: [...(sessions[currentSession]?.messages || []), userMsg],
+        }),
+      });
+
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+
+      for await (const line of streamJSONL(res)) {
+        if (line === "[END_OF_RESPONSE]") break;
+        let obj = null;
+        try { obj = JSON.parse(line); } catch { continue; }
+        if (obj && obj.delta) {
+          gotChunk = true;
+          accumulated += obj.delta + "\n";
+          updateLastAssistantMsg(
+            accumulated.trim(),
+            obj.model && obj.model.toLowerCase().includes("monday")
+          );
+        }
+      }
+
+      if (!gotChunk) {
+        errorMsg = "No response received from backend (is it running?)";
+      }
+    } catch (err) {
+      errorMsg = `API error: ${err.message}`;
+    } finally {
+      if (errorMsg) {
+        appendMsg({ role: "assistant", content: errorMsg, monday: true });
+      }
+      setLoading(false);
+    }
+  };
+
+  // Universal "send" dispatcher
+  const handleSend = (e) => {
+    if (targetModel === "monday") {
+      handleSendMonday(e);
+    } else {
+      handleSendMistral(e);
+    }
+  };
+
+  // New chat session (now includes unique session_id!)
   const handleNewChat = () => {
     const sid = makeId();
     setCurrentSession(sid);
-    setSessions(prev => ({ ...prev, [sid]: { title: ts(), created: Date.now(), messages: [] } }));
+    setSessions(prev => ({
+      ...prev,
+      [sid]: {
+        title: ts(),
+        created: Date.now(),
+        messages: [],
+        session_id: sid // unique for each chat
+      }
+    }));
     if (isMobile) setSidebarOpen(false);
   };
 
@@ -284,6 +416,16 @@ function App() {
             <button className="chat-send-btn" type="submit" disabled={loading || !input.trim()}>
               {loading ? "..." : "Send"}
             </button>
+            <select
+              value={targetModel}
+              onChange={e => setTargetModel(e.target.value)}
+              disabled={loading}
+              style={{ marginLeft: 8, borderRadius: 5, padding: "6px 8px", background: "#19191e", color: "#fff" }}
+              aria-label="Choose model"
+            >
+              <option value="monday">Monday (ChatGPT, Live)</option>
+              <option value="mistral">Mistral (Fast, One-shot)</option>
+            </select>
           </form>
         </div>
       </div>
