@@ -6,15 +6,23 @@ sys.path.insert(0, os.path.join(os.getcwd(), "backend"))
 
 set -e
 
+# Always run from backend directory
+cd "$(dirname "$0")"
+
 # --- Config ---
 ENV_NAME="runmistral"
 BACKEND_DIR="$(pwd)"
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
-FRONTEND_DIR="$(dirname "$BACKEND_DIR")/frontend"
-BACKEND_LOG="$BACKEND_DIR/backend.log"
-FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
+FRONTEND_DIR="$BACKEND_DIR/../frontend"
+FRONTEND_LOG="$BACKEND_DIR/logs/frontend.log"
+BACKEND_LOG="$BACKEND_DIR/logs/backend.log"
 BACKEND_FILE="$BACKEND_DIR/router.py"
+
+echo "BACKEND_DIR: $BACKEND_DIR"
+echo "FRONTEND_DIR: $FRONTEND_DIR"
+echo "BACKEND_LOG: $BACKEND_LOG"
+echo "FRONTEND_LOG: $FRONTEND_LOG"
 
 # --- Function: Start Backend (run_llama.py) ---
 start_backend() {
