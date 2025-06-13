@@ -1,25 +1,35 @@
 <link rel="stylesheet" type="text/css" href="docs/custom.css">
 <div align="center">
-  <a
-href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/Open%20Use-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Fair Use License"/>
   </a>
   <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/GodCore%20v.0.1.0-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT License"/>
+    <img src="https://img.shields.io/badge/GodCore%20v.0.1.0-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GodCore v0.1.0"/>
   </a>
 </div>
 <div align="center">
-  <a
-href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
+  <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About%20Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/See-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Why"/>
   </a>
-  <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
+  <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About%20Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
+</div>
 
 # GodCore: Dev Diary & Gotchas
 
-</div>
+---
+
+## Releases
+
+- **v0.1.0** — Fully local Mistral backend and dashboard UI  
+- **v0.2.0** — Added ngrok integration (buggy background image centering; otherwise fully operational)  
+- **v0.3.0 (WIP):**
+  - **GPT integration**
+  - Multi-model backend debugging
+  - API feed and backend “no-fail” patching
+  - All features accessible in dashboard (errors currently due to backend failures)
+  - Background image now centers; title bar bug (floats/hides) under review
 
 ---
 
@@ -28,11 +38,11 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
 ### Rapid Prototyping & Key Milestones
 
 - **Sunday–Wednesday, v0.1.0 → v0.3.0**  
-  *Part-time (~4 hours a day, 3 days):*
-    - Prototyped a full 5T GPT wrapper enabling **free usage of ChatGPT (alpha)** with seamless local integration.
-    - Developed **persistent chat memory in the UI**; chat history is now stored in system storage and reloads reliably.
-    - UI is now fully operational—live chat, local memory, fast reloads, and robust error handling.
-    - Repo is reproducible from zero; every install script tested E2E.
+  *Part-time (~4 hours/day, 3 days):*
+    - Prototyped a full GPT wrapper for **free ChatGPT (alpha)** with seamless local integration.
+    - Persistent chat memory added to UI; system storage and reloads now work.
+    - UI now live: chat, local memory, reloads, error handling.
+    - End-to-end reproducibility: installer runs from clone on clean system.
 
 ---
 
@@ -52,17 +62,13 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   Miss the right combo or option, and the build silently disables features or fails.
 
 - **Solution:**  
-  After much docs/source diving, I automated the right build flags into `./install.sh`. Now, just clone and run the installer—no headaches.
+  Automated proper build flags in `./install.sh`—just clone and run.
 
 - **Lesson:**  
-  When the build breaks, read the source, not just the error. And always check for sneaky conditional logic in CMake/bash.
+  When builds break, read the source and hunt CMake/bash logic.
 
 ---
 
 **If you’re stuck, open an issue. If you fixed something, PR your solution so the next person doesn’t have to suffer.**
 
----
-
 *“I killed this in 3 hours so you don’t have to lose 3 days. You’re welcome.”*
-
----
