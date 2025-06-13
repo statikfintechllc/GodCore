@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 set -e
+
 # Always run from backend directory
 cd "$(dirname "$0")"
 
