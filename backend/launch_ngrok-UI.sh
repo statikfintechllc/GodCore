@@ -1,16 +1,23 @@
 #!/bin/zsh
 
 set -e
+# Always run from backend directory
+cd "$(dirname "$0")"
 
 # --- Config ---
 ENV_NAME="runmistral"
 BACKEND_DIR="$(pwd)"
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
-FRONTEND_DIR="$(dirname "$BACKEND_DIR")/frontend"
-FRONTEND_LOG="$(dirname "$BACKEND_DIR")/logs/frontend.log"
-BACKEND_LOG="$(dirname "$BACKEND_DIR")/logs/backend.log"
+FRONTEND_DIR="$BACKEND_DIR/../frontend"
+FRONTEND_LOG="$BACKEND_DIR/logs/frontend.log"
+BACKEND_LOG="$BACKEND_DIR/logs/backend.log"
 BACKEND_FILE="$BACKEND_DIR/router.py"
+
+echo "BACKEND_DIR: $BACKEND_DIR"
+echo "FRONTEND_DIR: $FRONTEND_DIR"
+echo "BACKEND_LOG: $BACKEND_LOG"
+echo "FRONTEND_LOG: $FRONTEND_LOG"
 
 export LLAMA_CPP_FORCE_CUDA=1
 export GGML_CUDA_FORCE_MMQ=1
