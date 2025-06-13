@@ -54,7 +54,8 @@ GodCore/
 │    ├── router.py
 │    ├── stop_all.sh
 │    │
-│    ├── llama-cpp-python/        
+│    ├── llama-cpp-python/
+│    │    │
 │    │    └── ...    # All llama-cpp-python files and folders here
 │    │
 │    └── logs/
@@ -63,29 +64,36 @@ GodCore/
 │         ├── frontend.log
 │         │
 │         ├── chat_responses/
+│         │   │
 │         │   └── ...    # All chatgpt files here
 │         │
-│         └── screenshots/ 
+│         └── screenshots/
+│             │
 │             └── ...    # All screenshots here
 │
 ├── environment/
+│         │
 │         ├── install.sh
 │         ├── conda_env.yml
 │         └── requirements.txt
 │
 └── frontend/
+    │     │
     │     ├── package.json
     │     └── package-lock.json
     │
     ├── public/
+    │     │
     │     └── index.html
     │
     ├── src/
+    │     │
     │     ├── App.js
     │     ├── index.js
     │     └── App.css
     │
     └── node_modules/
+          │
           └── ...    # All node_modules are built here
 ```
 
