@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-set -e  # Exit on any error
+set -e
 
-# Go to backend directory
+# Always run from backend directory
 cd "$(dirname "$0")"
 
 # --- Config ---
@@ -19,6 +19,10 @@ echo "BACKEND_DIR: $BACKEND_DIR"
 echo "FRONTEND_DIR: $FRONTEND_DIR"
 echo "BACKEND_LOG: $BACKEND_LOG"
 echo "FRONTEND_LOG: $FRONTEND_LOG"
+
+export LLAMA_CPP_FORCE_CUDA=1
+export GGML_CUDA_FORCE_MMQ=1
+export GGML_CUDA_PEER_ACCESS=0
 
 # --- Function: Start Backend (run_llama.py) ---
 start_backend() {
@@ -58,3 +62,20 @@ echo "    Frontend: http://localhost:3000"
 echo "[*] To stop: pkill -f run_llama.py && pkill -f react-scripts"
 echo "[*] Tail logs: tail -f $BACKEND_LOG $FRONTEND_LOG"
 
+FRONTEND_URL="http://localhost:3000"
+LAN_IP=$(hostname -I | awk '{print $1}')
+LAN_URL="http://$LAN_IP:3000"
+
+echo "\n[*] Access frontend via:"
+echo "    $FRONTEND_URL"
+echo "    $LAN_URL"
+echo "\n[*] Scan QR code below (LAN):"
+
+python3 -c "
+import qrcode
+import sys
+qr = qrcode.QRCode(border=2)
+qr.add_data('$LAN_URL')
+qr.make(fit=True)
+qr.print_ascii(invert=True)
+" || echo "Install python 'qrcode' module to print QR code."
