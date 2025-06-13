@@ -8,8 +8,8 @@ BACKEND_DIR="$(pwd)"
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
 FRONTEND_DIR="$(dirname "$BACKEND_DIR")/frontend"
-BACKEND_LOG="$BACKEND_DIR/backend.log"
-FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
+FRONTEND_LOG="$(dirname "$BACKEND_DIR")/logs/frontend.log"
+BACKEND_LOG="$(dirname "$BACKEND_DIR")/logs/backend.log"
 BACKEND_FILE="$BACKEND_DIR/router.py"
 
 export LLAMA_CPP_FORCE_CUDA=1
