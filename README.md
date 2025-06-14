@@ -1,1 +1,0 @@
-GodCore/About Us/README.md
