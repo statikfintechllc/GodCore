@@ -22,6 +22,8 @@ import argparse
 # Where to find each backend server
 MISTRAL_URL = "http://localhost:8000/v1/chat/completions"
 MONDAY_URL = "http://localhost:8080/v1/chat/completions"
+/v1/chat/completions/mistral = "http://localhost:8000/v1/chat/completions"
+/v1/chat/completions/monday = "http://localhost:8080/v1/chat/completions"
 
 app = FastAPI()
 app.add_middleware(

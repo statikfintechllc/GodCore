@@ -35,7 +35,6 @@ body, html, #root {
   max-height: 100vh;
 }
 
-/* Mobile fix: force all contain with !important */
 @media (max-width: 900px) {
   .app-bg {
     background-size: contain !important;
@@ -63,52 +62,30 @@ body, html, #root {
   background: none !important;
 }
 
-/* Sidebar base styles */
+/* --------- SIDEBAR PATCH --------- */
+/* Hide base sidebar on all screens */
 .sidebar {
-  width: 255px;
-  min-width: 165px;
-  max-width: 340px;
-  background: rgba(16,20,28,0.95);
-  border-right: 2px solid #1a1a22;
-  overflow-y: auto;
-  padding: 14px 8px 88px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: transform 0.34s cubic-bezier(.57,.21,.69,1.25), box-shadow 0.2s;
-  box-shadow: 2px 0 14px #0004;
-  height: 100vh;
-  z-index: 10;
+  display: none !important;
 }
 
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
-}
-
+/* Show the toggle button on all screens */
 .sidebar-tab-toggle {
-  display: none;
+  display: block !important;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 110;
+  background: #1b1d28f0;
+  color: #fff;
+  border: none;
+  border-radius: 0 0 16px 0;
+  font-size: 1.7rem;
+  padding: 12px 30px 14px 20px;
+  cursor: pointer;
+  box-shadow: 2px 6px 24px #0008;
 }
 
-@media (max-width: 900px) {
-  .sidebar-tab-toggle {
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 110;
-    background: #1b1d28f0;
-    color: #fff;
-    border: none;
-    border-radius: 0 0 16px 0;
-    font-size: 1.7rem;
-    padding: 12px 30px 14px 20px;
-    cursor: pointer;
-    box-shadow: 2px 6px 24px #0008;
-  }
-}
-
+/* Sidebar modal overlay always available */
 .sidebar-modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -205,7 +182,6 @@ body, html, #root {
   color: #fff;
   opacity: 1;
 }
-
 .sidebar-list {
   flex: 1 1 0;
   min-height: 0;
@@ -250,20 +226,23 @@ body, html, #root {
   text-shadow: 1px 1px 4px #000, 0 0 2px #fff;
   font-weight: 900;
   background: none;
+  display: inline;
 }
 
-/* Sticky header always visible at top */
+/* HEADER: Fixed, logo left, title right, always visible, always horizontal */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  z-index: 12; /* higher than chat, lower than modal/alerts */
+  z-index: 12;
   padding: 18px 0 8px 0;
-  background: rgba(0,0,0,0.92); /* subtle dark, not transparent */
+  background: rgba(0,0,0,0.92);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
+  gap: 18px;
   box-shadow: 0 2px 16px #0004;
   transition: background 0.18s;
 }
@@ -271,24 +250,28 @@ body, html, #root {
 .app-logo {
   width: 48px;
   height: 48px;
-  margin-bottom: 3px;
+  margin-right: 12px;
+  margin-bottom: 0;
 }
+
 .main-title {
   font-size: 2.2rem;
   color: #fff;
   font-family: 'Segoe UI', Arial, sans-serif;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   letter-spacing: -1px;
   background: none !important;
   box-shadow: none !important;
   margin: 0;
   padding: 0;
+  display: inline;
 }
 
 @media (max-width: 700px) {
   .header {
     padding: 12px 0 6px 0;
+    gap: 8px;
   }
   .main-title {
     font-size: 1.5rem;
@@ -356,7 +339,6 @@ body, html, #root {
   box-shadow: 0 1px 8px #a8000036;
 }
 
-/* --- Chat input row, always one line, responsive --- */
 .chat-input-form {
   position: fixed;
   bottom: 0; left: 0;
@@ -405,7 +387,6 @@ body, html, #root {
   cursor: not-allowed;
 }
 
-/* Model selector styling */
 .chat-input-form select {
   flex: 0 0 auto;
   font-size: 0.97rem;
@@ -453,12 +434,10 @@ body, html, #root {
   }
 }
 
-/* Prevent overflow and force single-line inputs */
 .chat-input-form > * {
   min-width: 0;
 }
 
-/* Responsive adjustments */
 @media (max-width: 900px) {
   .main-content {
     flex-direction: column;
@@ -476,7 +455,6 @@ body, html, #root {
   }
 }
 
-/* Remove blue webkit highlight on mobile tap/click */
 .sidebar-item,
 .sidebar-delete-btn {
   -webkit-tap-highlight-color: transparent;

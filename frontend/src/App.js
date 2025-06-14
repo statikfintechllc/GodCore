@@ -1,9 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import Papa from "papaparse";
 import "./App.css";
 import AppIcon from "./Icon_Logo/App_Icon_&_Loading_&_Inference_Image.png";
 
+// Optionally allow backend URL override (not used in fetch below, but safe to keep)
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+// -------- UTILITIES ----------
 function ts() {
   return new Date().toLocaleString(undefined, { hour12: false }).replace(/:\d{2}$/, "");
 }
@@ -18,15 +25,103 @@ function getBubbleClass(role, isMonday) {
 function getModelLabel(isMonday) {
   return isMonday ? "High-Power" : "Local-Power";
 }
+
+// -------- SMART CODE BLOCK --------
 function CodeBlock({ className, children }) {
+  const language = (className || "").replace("language-", "") || "text";
+  const value = String(children).trim();
+
+  // Pretty JSON rendering
+  if (language === "json" || value.match(/^\s*\{[\s\S]*\}\s*$/)) {
+    try {
+      const obj = JSON.parse(value);
+      return (
+        <div style={{ position: "relative", marginBottom: 12 }}>
+          <SyntaxHighlighter language="json" style={vscDarkPlus} customStyle={{
+            background: "#181825", borderRadius: 8, padding: 16, fontSize: "1em"
+          }}>
+            {JSON.stringify(obj, null, 2)}
+          </SyntaxHighlighter>
+          <CopyBtn content={JSON.stringify(obj, null, 2)} />
+        </div>
+      );
+    } catch {}
+  }
+
+  // Pretty CSV rendering
+  if (language === "csv" || value.split("\n")[0].split(",").length > 1) {
+    try {
+      const parsed = Papa.parse(value, { header: false });
+      if (parsed.data && parsed.data.length > 0) {
+        return (
+          <div style={{ margin: "12px 0" }}>
+            <table style={{ background: "#222", color: "#fff", borderCollapse: "collapse", width: "100%" }}>
+              <tbody>
+                {parsed.data.map((row, i) =>
+                  <tr key={i}>
+                    {row.map((cell, j) =>
+                      <td key={j} style={{ border: "1px solid #444", padding: "4px 8px" }}>{cell}</td>
+                    )}
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <CopyBtn content={value} />
+          </div>
+        );
+      }
+    } catch { /* Not valid CSV */ }
+  }
+
+  // Inline base64 image
+  if ((language === "image" || value.startsWith("data:image/")) && value.length > 32) {
+    return <img src={value} alt="Image from AI" style={{ maxWidth: "80%", maxHeight: 320, margin: "10px 0", borderRadius: 8 }} />;
+  }
+
+  // AI file output
+  if (language === "file" || value.startsWith("[file:")) {
+    const fname = value.match(/\[file:(.+?)\]/)?.[1] || "file";
+    return (
+      <div style={{
+        background: "#262637", color: "#e0e0e0", borderRadius: 8, padding: 16, margin: "12px 0",
+        fontStyle: "italic"
+      }}>
+        <span role="img" aria-label="file" style={{ marginRight: 8 }}>📄</span>
+        {fname}
+        <span style={{ marginLeft: 16, color: "#888" }}>(Download not implemented)</span>
+      </div>
+    );
+  }
+
+  // Syntax-highlighted code block, with copy button
   return (
-    <pre className={className || "block"} style={{ background: "#14141a", borderRadius: 10, padding: 12, overflowX: "auto" }}>
-      <code>{children}</code>
-    </pre>
+    <div style={{ position: "relative", marginBottom: 12 }}>
+      <SyntaxHighlighter language={language} style={vscDarkPlus} customStyle={{
+        background: "#181825", borderRadius: 8, padding: 16, fontSize: "1em"
+      }}>
+        {value}
+      </SyntaxHighlighter>
+      <CopyBtn content={value} />
+    </div>
   );
 }
 
-// Utility for streaming JSONL from Monday/ChatGPT backend
+// -------- COPY BUTTON --------
+function CopyBtn({ content }) {
+  return (
+    <button
+      onClick={() => navigator.clipboard.writeText(content)}
+      style={{
+        position: "absolute", right: 10, top: 10,
+        background: "#23232a", color: "#fff", border: "none", borderRadius: 4,
+        padding: "2px 8px", fontSize: "0.8em", cursor: "pointer", zIndex: 2
+      }}
+      title="Copy to clipboard"
+    >Copy</button>
+  );
+}
+
+// -------- JSONL STREAM UTILITY --------
 async function* streamJSONL(response) {
   const decoder = new TextDecoder();
   const reader = response.body.getReader();
@@ -162,7 +257,7 @@ function App() {
     });
   };
 
-  // ---- Mistral (NO streaming, normal POST) ----
+  // ---- Mistral (STREAMING) ----
   const handleSendMistral = async (e) => {
     e.preventDefault();
     if (!input.trim() || loading) return;
@@ -170,8 +265,13 @@ function App() {
     appendMsg(userMsg);
     setInput("");
     setLoading(true);
+
+    let accumulated = "";
+    let gotChunk = false;
+    let errorMsg = null;
+
     try {
-      const res = await fetch("http://localhost:8000/v1/chat/completions/mistral", {
+      const res = await fetch("/v1/chat/completions/mistral", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -179,15 +279,32 @@ function App() {
           messages: [...(sessions[currentSession]?.messages || []), userMsg],
         }),
       });
-      const data = await res.json();
-      let msgContent =
-        data?.content
-          ? data.content
-          : "API error: No response from Mistral backend.";
-      appendMsg({ role: "assistant", content: msgContent, monday: false });
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+
+      for await (const line of streamJSONL(res)) {
+        if (line === "[END_OF_RESPONSE]") break;
+        let obj = null;
+        try { obj = JSON.parse(line); } catch { continue; }
+        if (obj && (obj.delta || obj.content)) {
+          gotChunk = true;
+          const chunk = obj.delta || obj.content;
+          accumulated += chunk + "\n";
+          updateLastAssistantMsg(
+            accumulated.trim(),
+            false // Mistral = not Monday
+          );
+        }
+      }
+
+      if (!gotChunk) {
+        errorMsg = "No response received from Mistral backend (is it running/streaming?)";
+      }
     } catch (err) {
-      appendMsg({ role: "assistant", content: "API error: " + err.message, monday: false });
+      errorMsg = `API error: ${err.message}`;
     } finally {
+      if (errorMsg) {
+        appendMsg({ role: "assistant", content: errorMsg, monday: false });
+      }
       setLoading(false);
     }
   };
@@ -401,15 +518,37 @@ function App() {
                   remarkPlugins={[remarkGfm]}
                   components={{
                     code({ node, inline, className, children, ...props }) {
-                      return !inline ? (
-                        <CodeBlock className={className}>{children}</CodeBlock>
-                      ) : (
-                        <code className={className} style={{ background: "#23232a", borderRadius: 4, padding: "1px 6px" }} {...props}>{children}</code>
-                      );
+                      if (inline) {
+                        const value = String(children).trim();
+                        if (value.startsWith("data:image/")) {
+                          return <img src={value} alt="inline-img" style={{ maxWidth: 220, borderRadius: 6, margin: "4px 0" }} />;
+                        }
+                        return (
+                          <code className={className} style={{ background: "#23232a", borderRadius: 4, padding: "2px 6px", fontSize: "1em" }} {...props}>
+                            {children}
+                          </code>
+                        );
+                      }
+                      return <CodeBlock className={className}>{children}</CodeBlock>;
                     },
-                    pre({ node, ...props }) {
-                      return <pre style={{ background: '#14141a', borderRadius: 10, padding: 10, overflowX: 'auto' }} {...props} />;
-                    }
+                    table({ node, ...props }) {
+                      return <table style={{ borderCollapse: "collapse", width: "100%", background: "#191920", color: "#eee", margin: "8px 0" }} {...props} />;
+                    },
+                    th({ node, ...props }) {
+                      return <th style={{ border: "1px solid #333", padding: "4px 8px", background: "#232337" }} {...props} />;
+                    },
+                    td({ node, ...props }) {
+                      return <td style={{ border: "1px solid #333", padding: "4px 8px" }} {...props} />;
+                    },
+                    ul({ node, ...props }) {
+                      return <ul style={{ marginLeft: 24 }} {...props} />;
+                    },
+                    ol({ node, ...props }) {
+                      return <ol style={{ marginLeft: 24 }} {...props} />;
+                    },
+                    img({ node, ...props }) {
+                      return <img style={{ maxWidth: "80%", maxHeight: 400, margin: "10px 0", borderRadius: 10, border: "1px solid #232" }} {...props} />;
+                    },
                   }}
                 />
               </div>
