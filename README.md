@@ -26,15 +26,8 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
 # GodCore Llama Mistral-13B Expirament
 
 > **Currently in the middle of adding a main feature — Switch between Local and "Cloud" ChatGPT Chatting non-api.**
-
-**Stay tuned if intrigued**
-
-*V.0.3.0 will be the Background image bug removal for mobile, Proper Alignment of contents in the SideBar on Mobile, as well as proper Hide-away side bar on DeskTop. And The Addition Of the Monday Handler.*
-
-**Local LLM (llama.cpp) with Mistral-13B model**
-> FastAPI backend (OpenAI-compatible route: `/v1/chat/completions`)
-> Custom React dashboard (full-feature, modern UI)
-> All-in-one repo, fully wired and ready
+> 
+> **Stay tuned if this for more**
 
 ---
 
@@ -107,6 +100,32 @@ GodCore/
           │
           └── ...    # All node_modules are built here
 ```
+
+---
+
+<div align="center">
+
+  *V.0.3.0 will be the Background image bug removal for mobile(Done), Proper Alignment of contents in the SideBar on Mobile(Done), as well as proper Hide-away side bar on DeskTop(In-Progress). And The Addition Of the GPT_handler.py, router.py, and setupProxy.js.(In-Progress)*
+
+</div>
+
+---
+
+> **🚀 Built by a Solo Engineer, Not a Prompt Engineer**
+>
+> *This system—GodCore—was built in 5 days, from scratch, by one hands-on builder.*
+> *No coding background. No team. It’s a persistent, multi-brain LLM dashboard.
+> *Local Mistral and free ChatGPT, streaming UI, persistent chat history, and instant mobile access (QR/ngrok).*
+>
+> If you want to hire a doer, not a talker, contact me.
+>
+**ascend.gmail@gmail.com** | *[Ko-fi](https://ko-fi.com/statikfintech_llc), [Patreon]([https://ko-fi.com/statikfintech_llc](https://patreon.com/StatikFinTech_LLC?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink))*
+
+or
+
+> **ascend.help@gmail.com** | *[Ko-fi](https://ko-fi.com/statikfintech_llc), [Patreon]([https://ko-fi.com/statikfintech_llc](https://patreon.com/StatikFinTech_LLC?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink))*
+
+---
 
 ## **Install & Setup**
 
@@ -210,6 +229,20 @@ cd backend
 ./stop_all.sh
 # (Kills backend and frontend processes)
 ```
+
+---
+
+**The Local LLM (llama.cpp) with Mistral-13B model**
+> FastAPI backend
+> OpenAI-compatible route: `/v1/chat/completions`
+> Custom React dashboard (full-feature, modern UI)
+> All-in-one repo, fully wired and ready
+
+**The Cloud LLM (ChatGPT) with GPT_handler**
+> Same as Local
+> State-of-the-Art OCR and Scrapping with live feed text-extraction
+>     - That’s the wild “screen scrape” automation you’re running with pytesseract + pyautogui for GPT_handler.
+>     - You’re not just doing “API call,” you’re doing live window wrangling.
 
 ---
 
