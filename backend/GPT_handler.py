@@ -30,17 +30,21 @@ import uvicorn
 
 SESSION_WINDOWS = {}
 
+
 def list_chatgpt_windows():
     """Return a dict mapping window IDs to titles for all ChatGPT windows."""
     out = subprocess.check_output(["wmctrl", "-lx"]).decode()
     return {
-        line.split()[0]: line for line in out.strip().splitlines()
+        line.split()[0]: line
+        for line in out.strip().splitlines()
         if "chatgpt" in line.lower()
     }
+
 
 def focus_window(window_id):
     subprocess.run(["wmctrl", "-ia", window_id])
     time.sleep(0.7)  # Give focus time to swap
+
 
 def launch_chatgpt_for_session(session_id):
     """Ensure ChatGPT instance for session_id exists, focus it, else launch and bind."""
@@ -58,11 +62,13 @@ def launch_chatgpt_for_session(session_id):
     SESSION_WINDOWS[session_id] = win_id
     focus_window(win_id)
 
+
 def paste_and_enter(text):
     pyperclip.copy(text)
     pyautogui.hotkey("ctrl", "v")
     time.sleep(1)
     pyautogui.press("enter")
+
 
 def ask_monday_stream(prompt, session_id=None, interrupt_checker=None):
     print(f"[ASK] Asking ChatGPT (session {session_id}): {prompt}")
@@ -87,6 +93,7 @@ def ask_monday_stream(prompt, session_id=None, interrupt_checker=None):
         pyautogui.scroll(-500)
     yield "[END_OF_RESPONSE]"
 
+
 # Legacy for non-stream mode, uses same binding logic
 def ask_monday(prompt, session_id=None):
     print(f"[ASK] Asking ChatGPT (session {session_id}): {prompt}")
@@ -98,10 +105,12 @@ def ask_monday(prompt, session_id=None):
     response = text.strip() if text else ""
     return {"prompt": prompt, "response": response}
 
+
 def handle(task):
     prompt = task.get("target") or task.get("text") or "What is your task?"
     session_id = task.get("session_id", None)
     return ask_monday(prompt, session_id=session_id)
+
 
 # ==== FastAPI Server for Web API ====
 
@@ -115,9 +124,11 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+
 @app.get("/")
 def root():
     return {"message": "ChatGPT handler is live. POST to /v1/chat/completions"}
+
 
 @app.post("/v1/chat/completions")
 async def chat_completions(request: Request):
@@ -125,20 +136,27 @@ async def chat_completions(request: Request):
         body = await request.json()
         prompt = body.get("target") or body.get("text") or ""
         session_id = body.get("session_id", None)
+
         # Streaming response
         async def streamer():
             for chunk in ask_monday_stream(prompt, session_id=session_id):
                 yield f"data: {chunk}\n\n"
+
         return StreamingResponse(streamer(), media_type="text/event-stream")
     except Exception as e:
+
         async def errstream():
             yield f"data: [ERROR: {str(e)}]\n\n"
+
         return StreamingResponse(errstream(), media_type="text/event-stream")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=8080, help="Port to run server on")
-    parser.add_argument('--host', type=str, default="0.0.0.0", help="Host to run server on")
+    parser.add_argument("--port", type=int, default=8080, help="Port to run server on")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Host to run server on"
+    )
     args = parser.parse_args()
 
     print(f"🚀 ChatGPT handler API ready on http://{args.host}:{args.port}")

@@ -33,36 +33,50 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+
 @app.get("/")
 def root():
     return {
         "message": "GodCore Router is live. POST to /v1/chat/completions/[mistral|monday]"
     }
 
+
 @app.post("/v1/chat/completions/mistral")
 async def proxy_mistral(request: Request):
     try:
         async with httpx.AsyncClient(timeout=None) as client:
-            resp = await client.post(MISTRAL_URL, content=await request.body(), headers=dict(request.headers))
+            resp = await client.post(
+                MISTRAL_URL, content=await request.body(), headers=dict(request.headers)
+            )
             return JSONResponse(status_code=resp.status_code, content=resp.json())
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 @app.post("/v1/chat/completions/monday")
 async def proxy_monday(request: Request):
     try:
         async with httpx.AsyncClient(timeout=None) as client:
             # Monday handler streams responses, so we need to proxy the stream
-            backend_resp = await client.stream("POST", MONDAY_URL, content=await request.body(), headers=dict(request.headers))
+            backend_resp = await client.stream(
+                "POST",
+                MONDAY_URL,
+                content=await request.body(),
+                headers=dict(request.headers),
+            )
             return StreamingResponse(
                 backend_resp.aiter_raw(),
-                media_type=backend_resp.headers.get("content-type", "text/event-stream")
+                media_type=backend_resp.headers.get(
+                    "content-type", "text/event-stream"
+                ),
             )
     except Exception as e:
         # On error, return as an SSE message
         async def errstream():
-            yield f'data: [ERROR: {str(e)}]\n\n'
+            yield f"data: [ERROR: {str(e)}]\n\n"
+
         return StreamingResponse(errstream(), media_type="text/event-stream")
+
 
 @app.post("/v1/chat/completions")
 async def proxy_both(request: Request):
@@ -76,12 +90,18 @@ async def proxy_both(request: Request):
         return await proxy_mistral(request)
     else:
         # Optionally call both or return error
-        return JSONResponse(status_code=400, content={"error": "Model not recognized. Specify 'monday' or 'mistral'."})
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Model not recognized. Specify 'monday' or 'mistral'."},
+        )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8088, help="Port to run router on")
-    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run router on")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Host to run router on"
+    )
     args = parser.parse_args()
     print(f"🚦 GodCore Router ready on http://{args.host}:{args.port}")
     uvicorn.run("router:app", host=args.host, port=args.port)
