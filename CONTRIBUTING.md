@@ -16,12 +16,21 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
+</div>
+
+  <div align="center">
+  <a href="https://ko-fi.com/statikfintech_llc">
+    <img src="https://img.shields.io/badge/Support-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Support"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/SFTi-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="SFTi"/>
+  </a>
 
 # Contributing to GremlinGPT
 
-</div>
+*First off: thank you for being curious, weird, or skilled enough to want in.*
 
-First off: thank you for being curious, weird, or skilled enough to want in.
+</div>
 
 ## 🧠 Minimum Brain Requirements
 
