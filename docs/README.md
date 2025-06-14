@@ -46,9 +46,12 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 ```text
 GodCore/
 │
-├── README.md
 ├── LICENSE
-├── DEV_DIARY.md
+├── About Us/
+│    └── ...    # Get to know the creator(s)
+│
+├── docs
+│    └── ...    # Important Repo Documentation
 │
 ├── backend/
 │    │
