@@ -16,8 +16,16 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   <a href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/GremlinGPT-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
+  <div align="center">
+  <a href="https://ko-fi.com/statikfintech_llc">
+    <img src="https://img.shields.io/badge/Support-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Support"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/SFTi-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="SFTi"/>
+  </a>
 
 # GodCore Llama Mistral-13B Expirament
+
 > **Currently in the middle of adding a main feature — Switch between Local and "Cloud" ChatGPT Chatting non-api.**
 
 **Stay tuned if intrigued**
