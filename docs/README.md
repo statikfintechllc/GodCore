@@ -47,11 +47,6 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 GodCore/
 │
 ├── LICENSE
-├── About Us/
-│    └── ...    # Get to know the creator(s)
-│
-├── docs
-│    └── ...    # Important Repo Documentation
 │
 ├── backend/
 │    │
@@ -88,25 +83,32 @@ GodCore/
 │         ├── conda_env.yml
 │         └── requirements.txt
 │
-└── frontend/
-    │     │
-    │     ├── package.json
-    │     └── package-lock.json
-    │
-    ├── public/
-    │     │
-    │     └── index.html
-    │
-    ├── src/
-    │     │
-    │     ├── App.js
-    │     ├── setupProxy.js
-    │     ├── index.js
-    │     └── App.css
-    │
-    └── node_modules/
-          │
-          └── ...    # All node_modules are built here
+├── frontend/
+│   │     │
+│   │     ├── package.json
+│   │     └── package-lock.json
+│   │
+│   ├── public/
+│   │     │
+│   │     └── index.html
+│   │
+│   ├── src/
+│   │     │
+│   │     ├── App.js
+│   │     ├── setupProxy.js
+│   │     ├── index.js
+│   │     └── App.css
+│   │
+│   └── node_modules/
+│         │
+│         └── ...    # All node_modules are built here
+│
+├── About Us/
+│    └── ...    # Get to know the creator(s)
+│
+└── docs
+     └── ...    # Important Repo Documentation
+
 ```
 
 ---
