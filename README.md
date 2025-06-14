@@ -1,13 +1,6 @@
 <link rel="stylesheet" type="text/css" href="docs/custom.css">
 <div align="center">
   <a
-href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/Open%20Use-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Fair Use License"/>
-  </a>
-  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/GodCore%20v.0.1.0-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT License"/>
-  </a>
-  <a
 href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREMLINGPT.md">
     <img src="https://img.shields.io/badge/See-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Why"/>
   </a>
@@ -20,7 +13,16 @@ href="https://github.com/statikfintechllc/AscendAI/blob/master/About Us/WHY_GREM
   <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/SFTi-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="SFTi"/>
   </a>
-
+<div align="center">
+  <a
+href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/Open%20Use-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Fair Use License"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/GodCore/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/GodCore%20v.0.1.0-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT License"/>
+  </a>
+</div>
+  
 # GodCore Llama Mistral-13B Expirament
 
 > **Currently in the middle of adding a main feature — Switch between Local and "Cloud" ChatGPT Chatting non-api.**
