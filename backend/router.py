@@ -55,7 +55,9 @@ async def proxy_mistral(request: Request):
             )
             return StreamingResponse(
                 backend_resp.aiter_raw(),
-                media_type=backend_resp.headers.get("content-type", "text/event-stream"),
+                media_type=backend_resp.headers.get(
+                    "content-type", "text/event-stream"
+                ),
             )
     except Exception as e:
         async def errstream():
@@ -84,7 +86,6 @@ async def proxy_monday(request: Request):
         # On error, return as an SSE message
         async def errstream():
             yield f"data: [ERROR: {str(e)}]\n\n"
-
         return StreamingResponse(errstream(), media_type="text/event-stream")
 
 
