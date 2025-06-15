@@ -46,8 +46,6 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 ```text
 GodCore/
 │
-├── LICENSE
-│
 ├── backend/
 │    │
 │    ├── launch_ngrok-UI.sh
@@ -106,8 +104,10 @@ GodCore/
 ├── About Us/
 │    └── ...    # Get to know the creator(s)
 │
-└── docs
-     └── ...    # Important Repo Documentation
+├── docs
+│    └── ...    # Important Repo Documentation
+│
+└── LICENSE
 
 ```
 
