@@ -43,18 +43,20 @@ MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
-    n_gpu_layers=35,    # FULL offload for 13B, always use all available
-    main_gpu=0,    # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[20, 20],    # Split evenly for two 3060s
-    n_threads=24,    # Only affects CPU, low = more GPU work, high = more CPU
+    n_gpu_layers=35,  # FULL offload for 13B, always use all available
+    main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
+    TENSOR_SPLIT=[20, 20],  # Split evenly for two 3060s
+    n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,
     verbose=True,
 )
 
+
 class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     content: str
+
 
 class ChatRequest(BaseModel):
     model: str
@@ -64,11 +66,13 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = 16384
     stop: Optional[List[str]] = None
 
+
 @app.get("/")
 def root():
     return {
         "message": "Mistral LLaMA API is live. Use POST /v1/chat/completions to interact."
     }
+
 
 @app.post("/v1/chat/completions")
 async def chat_completion(request: ChatRequest):
@@ -94,14 +98,17 @@ async def chat_completion(request: ChatRequest):
                     stream=True,  # CRITICAL: enable streaming
                 ):
                     token = chunk["choices"][0]["text"]
-                    yield f'data: {token}\n\n'
+                    yield f"data: {token}\n\n"
             except Exception as e:
-                yield f'data: [Mistral inference error: {str(e)}]\n\n'
+                yield f"data: [Mistral inference error: {str(e)}]\n\n"
 
         return StreamingResponse(generate(), media_type="text/event-stream")
     except Exception as e:
         # Return OpenAI-style error
-        return JSONResponse(status_code=500, content={"error": "InferenceFailure", "detail": str(e)})
+        return JSONResponse(
+            status_code=500, content={"error": "InferenceFailure", "detail": str(e)}
+        )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

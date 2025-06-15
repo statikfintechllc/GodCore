@@ -28,9 +28,13 @@ import sys
 
 SESSION_WINDOWS = {}
 
+
 # --------- LOGGING ----------
 def log(msg, *a):
-    print(f"[{datetime.now().isoformat(timespec='seconds')}] {msg}", *a, file=sys.stderr)
+    print(
+        f"[{datetime.now().isoformat(timespec='seconds')}] {msg}", *a, file=sys.stderr
+    )
+
 
 # --------- WINDOW MANAGEMENT ----------
 def list_chatgpt_windows():
@@ -47,6 +51,7 @@ def list_chatgpt_windows():
         log(f"wmctrl failed: {e}")
         return {}
 
+
 def focus_window(window_id):
     try:
         log(f"Focusing window {window_id}")
@@ -55,13 +60,21 @@ def focus_window(window_id):
     except Exception as e:
         log(f"Focus window failed: {e}")
 
+
 def launch_chatgpt_for_session(session_id):
     log(f"Launching ChatGPT window for session: {session_id}")
     before = set(list_chatgpt_windows().keys())
 
     display = os.environ.get("DISPLAY", ":0")
     desktop_path = os.path.expanduser("~/.local/share/applications/chatgpt.desktop")
-    gtk_launch_exists = subprocess.call(["which", "gtk-launch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+    gtk_launch_exists = (
+        subprocess.call(
+            ["which", "gtk-launch"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        == 0
+    )
 
     if not gtk_launch_exists or not os.path.exists(desktop_path):
         log(f"gtk-launch not found or desktop entry missing: {desktop_path}")
@@ -107,12 +120,14 @@ def launch_chatgpt_for_session(session_id):
     log("Failed to detect new ChatGPT window.")
     raise RuntimeError("Failed to launch new ChatGPT window")
 
+
 def ensure_window_for_session(session_id):
     if session_id in SESSION_WINDOWS and SESSION_WINDOWS[session_id]:
         focus_window(SESSION_WINDOWS[session_id])
         return SESSION_WINDOWS[session_id]
     else:
         return launch_chatgpt_for_session(session_id)
+
 
 # --------- CHATGPT INTERACTION ----------
 def paste_and_enter(text):
@@ -126,6 +141,7 @@ def paste_and_enter(text):
     except Exception as e:
         log(f"paste_and_enter failed: {e}")
         raise
+
 
 def ask_monday_stream(prompt, session_id=None, interrupt_checker=None):
     log(f"[ASK] Asking ChatGPT (session {session_id}): {prompt}")
@@ -169,6 +185,7 @@ def ask_monday_stream(prompt, session_id=None, interrupt_checker=None):
             break
     yield "[END_OF_RESPONSE]"
 
+
 def ask_monday(prompt, session_id=None):
     log(f"[ASK] (non-stream) ChatGPT (session {session_id}): {prompt}")
     try:
@@ -183,10 +200,12 @@ def ask_monday(prompt, session_id=None):
         log(f"ask_monday failed: {e}")
         return {"prompt": prompt, "response": f"[ERROR: {e}]"}
 
+
 def handle(task):
     prompt = task.get("target") or task.get("text") or "What is your task?"
     session_id = task.get("session_id", None)
     return ask_monday(prompt, session_id=session_id)
+
 
 # ===== FastAPI Server =====
 app = FastAPI()
@@ -199,9 +218,11 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+
 @app.get("/")
 def root():
     return {"message": "ChatGPT handler is live. POST to /v1/chat/completions"}
+
 
 @app.post("/v1/chat/completions")
 async def chat_completions(request: Request):
@@ -217,14 +238,19 @@ async def chat_completions(request: Request):
         return StreamingResponse(streamer(), media_type="text/event-stream")
     except Exception as e:
         log(f"chat_completions error: {e}")
+
         async def errstream():
             yield f"data: [ERROR: {str(e)}]\n\n"
+
         return StreamingResponse(errstream(), media_type="text/event-stream")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8080, help="Port to run server on")
-    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run server on")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Host to run server on"
+    )
     args = parser.parse_args()
 
     log(f"🚀 ChatGPT handler API ready on http://{args.host}:{args.port}")
