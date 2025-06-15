@@ -47,12 +47,20 @@ def root():
 async def proxy_mistral(request: Request):
     try:
         async with httpx.AsyncClient(timeout=None) as client:
-            resp = await client.post(
-                MISTRAL_URL, content=await request.body(), headers=dict(request.headers)
+            backend_resp = await client.stream(
+                "POST",
+                MISTRAL_URL,
+                content=await request.body(),
+                headers=dict(request.headers),
             )
-            return JSONResponse(status_code=resp.status_code, content=resp.json())
+            return StreamingResponse(
+                backend_resp.aiter_raw(),
+                media_type=backend_resp.headers.get("content-type", "text/event-stream"),
+            )
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        async def errstream():
+            yield f"data: [ERROR: {str(e)}]\n\n"
+        return StreamingResponse(errstream(), media_type="text/event-stream")
 
 
 @app.post("/v1/chat/completions/monday")
