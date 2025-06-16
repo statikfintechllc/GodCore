@@ -34,7 +34,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 > 
 > **Stay tuned if this intrigues you.**
 
-*ADHD is a Cures, I think*
+*ADHD is a Curse, I think*
 
 ---
 
