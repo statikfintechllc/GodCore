@@ -13,15 +13,12 @@
 import os
 import time
 import uuid
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from typing import List, Literal, Optional
 from llama_cpp import Llama
 import uvicorn
-import argparse
-import sys
 
 # --- CUDA/Persistent GPU OFFLOAD (set before import) ---
 os.environ["LLAMA_CPP_FORCE_CUDA"] = "1"
@@ -39,13 +36,17 @@ app.add_middleware(
 )
 
 # --- Model Config ---
-MODEL_PATH = "/home/statiksmoke8/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
+MODEL_PATH = "/home/statiksmoke8/AscendNet/godcore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"
+TENSOR_SPLIT = "20,20"
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=4096,
     n_gpu_layers=35,  # FULL offload for 13B, always use all available
     main_gpu=0,  # 0 = first GPU, you can set this to 1 if desired
-    TENSOR_SPLIT=[20, 20],  # Split evenly for two 3060s
+    TENSOR_SPLIT=[
+        0.5,
+        0.5,
+    ],  # Split evenly for two 3060s, adjust if VRAM is not matched
     n_threads=24,  # Only affects CPU, low = more GPU work, high = more CPU
     use_mmap=True,
     use_mlock=False,
@@ -75,7 +76,7 @@ def root():
 
 
 @app.post("/v1/chat/completions")
-async def chat_completion(request: ChatRequest):
+def chat_completion(request: ChatRequest):
     prompt = (
         "".join(
             [
@@ -86,28 +87,38 @@ async def chat_completion(request: ChatRequest):
         + "Assistant:"
     )
     try:
-        # Streaming token output
-        def generate():
-            try:
-                for chunk in llm(
-                    prompt=prompt,
-                    temperature=request.temperature,
-                    top_p=request.top_p,
-                    max_tokens=request.max_tokens,
-                    stop=request.stop or ["</s>", "User:", "Assistant:"],
-                    stream=True,  # CRITICAL: enable streaming
-                ):
-                    token = chunk["choices"][0]["text"]
-                    yield f"data: {token}\n\n"
-            except Exception as e:
-                yield f"data: [Mistral inference error: {str(e)}]\n\n"
-
-        return StreamingResponse(generate(), media_type="text/event-stream")
-    except Exception as e:
-        # Return OpenAI-style error
-        return JSONResponse(
-            status_code=500, content={"error": "InferenceFailure", "detail": str(e)}
+        output = llm(
+            prompt=prompt,
+            temperature=request.temperature,
+            top_p=request.top_p,
+            max_tokens=request.max_tokens,
+            stop=request.stop or ["</s>", "User:", "Assistant:"],
         )
+    except Exception as e:
+        return {"error": "InferenceFailure", "detail": str(e)}
+
+    return {
+        "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",
+        "object": "chat.completion",
+        "created": int(time.time()),
+        "model": request.model,
+        "choices": [
+            {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": output["choices"][0]["text"].strip(),
+                },
+                "finish_reason": "stop",
+            }
+        ],
+        "usage": {
+            "prompt_tokens": output.get("prompt_tokens", 0),
+            "completion_tokens": output.get("completion_tokens", 0),
+            "total_tokens": output.get("prompt_tokens", 0)
+            + output.get("completion_tokens", 0),
+        },
+    }
 
 
 if __name__ == "__main__":

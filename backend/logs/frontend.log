@@ -1,1 +1,26 @@
-#news (here)
+
+> GodCore-frontend@1.0.0 start
+> cross-env HOST=0.0.0.0 DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start
+
+Attempting to bind to HOST environment variable: 0.0.0.0
+If this was unintentional, check that you haven't mistakenly set it in your shell.
+Learn more here: https://cra.link/advanced-config
+
+[HPM] Proxy created: /  -> http://localhost:8088
+[HPM] Proxy rewrite rule created: "^/api" ~> ""
+(node:2194828) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2194828) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled successfully!
+
+You can now view GodCore-frontend in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://192.168.1.108:3000
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+webpack compiled successfully
