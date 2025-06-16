@@ -61,10 +61,9 @@ GodCore/
 │    │
 │    └── logs/
 │         │
-│         ├── backend.log
 │         ├── router.log
-│         ├── MIS.log
-│         ├── GPT.log
+│         ├── mis_handler.log
+│         ├── gpt_handler.log
 │         ├── frontend.log
 │         │
 │         ├── chat_responses/
