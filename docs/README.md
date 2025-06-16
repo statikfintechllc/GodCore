@@ -34,6 +34,8 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 > 
 > **Stay tuned if this intrigues you.**
 
+*ADHD is a Cures, I think*
+
 ---
 
 *Documentation is updated frequently. If you see an issue, submit a PR or open an issue!*
