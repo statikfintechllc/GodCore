@@ -46,6 +46,8 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 
 <div align="center">
 
+> Clone release v.0.2.0, it has background image bug, but it works, v.0.3.0 is currently under construction*
+
   *V.0.3.0 will be the Background image bug removal for mobile(Done), Proper Alignment of contents in the SideBar on Mobile(Done), as well as proper Hide-away side bar on DeskTop(In-Progress). And The Addition Of the GPT_handler.py, router.py, and setupProxy.js.(In-Progress)*
 
 </div>
