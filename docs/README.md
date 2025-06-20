@@ -36,6 +36,8 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 
 *ADHD is a Curse, I think*
 
+⚠️*Working Directories will be GodCore and Mobile-Developer this weeken*⚠️
+
 ---
 
 *Documentation is updated frequently. If you see an issue, submit a PR or open an issue!*
