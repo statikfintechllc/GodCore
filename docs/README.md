@@ -36,7 +36,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 
 *ADHD is a Curse, I think*
 
-⚠️*The Working Directories will be GodCore and Mobile-Developer this weekend, DEBUGGINS*⚠️
+⚠️*The Working Directory will be AscendAI/GremlinGPT, His tools are Architeched. Time to attach and Debug*⚠️
 
 ---
 
