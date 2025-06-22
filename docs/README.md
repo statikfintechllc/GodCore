@@ -46,10 +46,11 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 <h1 align="center">AscendAI Traffic</h1>
 <div align="center">
   <em>
-    The Institute’s Propietary System:  The world’s first *R‑SRACS*
-    *Recursive, Self-Referential Autonomous Cognitive System*
+    The Institute’s Propietary System:  The world’s first R‑SRACS
+    Recursive, Self-Referential Autonomous Cognitive System
   </em>
 </div>
+
 <div align="center">
   <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png">
   <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png" alt="Traffic Graph" />
