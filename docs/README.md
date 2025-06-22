@@ -26,7 +26,6 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
   <a href="https://patreon.com/StatikFinTech_LLC?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink">
     <img src="https://img.shields.io/badge/SFTi-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="SFTi"/>
   </a>
-</div>
   
 # GodCore Llama Mistral-13B Expirament
 
@@ -42,6 +41,35 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 
 *Documentation is updated frequently. If you see an issue, submit a PR or open an issue!*
 
+</div>
+
+<h1 align="center">AscendAI Traffic</h1>
+<div align="center">
+  <em>
+    The Institute’s Propietary System:  The world’s first *R‑SRACS*
+    *Recursive, Self-Referential Autonomous Cognitive System*
+  </em>
+</div>
+<div align="center">
+  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png">
+  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png" alt="Traffic Graph" />
+  </a>
+</div>
+  
+<div align="center">
+  <em>
+Reset: After 7:00pm CST on First 2 Clones
+  </em>
+</div>
+
+<div align="center">
+  <a
+href="https://github.com/statikfintechllc/AscendDocs_of_GovSeverance/blob/master/Docs">
+    <img src="https://img.shields.io/badge/Learn-black?style=for-the-badge&logo=dragon&logoColor=gold" alt="Why"/>
+  </a>
+  <a href="https://github.com/statikfintechllc/AscendDocs_of_GovSeverance/blob/master/Docs">
+    <img src="https://img.shields.io/badge/Why-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
+  </a>
 </div>
 
 ---
@@ -188,21 +216,6 @@ cd backend
 > State-of-the-Art OCR and Scrapping with live feed text-extraction
 >     - That’s the wild “screen scrape” automation you’re running with pytesseract + pyautogui for GPT_handler.
 >     - You’re not just doing “API call,” you’re doing live window wrangling.
-
----
-
-<h1 align="center">AscendAI Traffic</h1>
-<div align="center">
-  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png">
-  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png" alt="Traffic Graph" />
-  </a>
-</div>
-  
-<div align="center">
-  <em>
-Reset: After 7:00pm CST on First 2 Clones
-  </em>
-</div>
 
 ---
 
