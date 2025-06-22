@@ -25,7 +25,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
     <img src="https://img.shields.io/badge/SFTi-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="SFTi"/>
   </a>
   
-# GodCore Llama Mistral-13B Expirament
+# GodCore Llama Mistral-13B Experiment
 
 > **Currently in the middle of adding a main feature — Switch between Local and "Cloud" ChatGPT Chatting non-api.**
 > 
