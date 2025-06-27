@@ -86,7 +86,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
   <em>
     
   The Institute’s Propietary System:  
-  **The world’s first *R‑SRACS* (Recursive, Self-Referential Autonomous Cognitive System)**</h1>
+  **The world’s first *RS-RACS* (Recursive, Self-Referential Autonomous Cognitive System)**</h1>
     
   </em>
 </div>
