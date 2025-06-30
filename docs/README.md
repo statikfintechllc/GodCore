@@ -1,6 +1,7 @@
 <div align="center">
-  <!-- GitHub Stats -->
-
+  <img     src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/ticker-bot/ticker.gif" 
+    alt="Repo Ticker Stats" 
+    style="height:33px;" />
 <div align="center"> 
   <img src="https://img.shields.io/github/stars/statikfintechllc/GodCore?style=social" alt="Stars"/>
   <img src="https://img.shields.io/github/forks/statikfintechllc/GodCore?style=social" alt="Forks"/>
@@ -101,8 +102,8 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 </div>
 
 <div align="center">
-  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png">
-  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/main/docs/traffic_graph.png" alt="Traffic Graph" />
+  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/graph/traffic_graph.png">
+  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/graph/traffic_graph.png" alt="Traffic Graph" />
   </a>
 </div>
   
