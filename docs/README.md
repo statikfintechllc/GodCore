@@ -96,14 +96,12 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
   <em>
     
   The Institute’s Propietary System:  
-  **The world’s first *RS-RACS* (Recursive, Self-Referential Autonomous Cognitive System)**</h1>
+  **The world’s first *R‑SRACS* (Recursive, Self-Referential Autonomous Cognitive System)**</h1>
     
-  </em>
-</div>
-
+  <em>
 <div align="center">
-  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/graph/traffic_graph.png">
-  <img src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/graph/traffic_graph.png" alt="Traffic Graph" />
+  <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/About US/">
+  <img src="https://raw.githubusercontent.com/statikfintechllc/WorkFlowRepo/master/docs/graph/traffic_graph.png" alt="Traffic Graph" />
   </a>
 </div>
   
@@ -112,7 +110,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
 Reset: After 7:00pm CST on First 2 Clones
   </em>
 </div>
-
+</div>
 <div align="center">
   <a
 href="https://github.com/statikfintechllc/AscendDocs_of_GovSeverance">
