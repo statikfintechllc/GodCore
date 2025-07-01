@@ -1,7 +1,8 @@
 <div align="center">
-  <img     src="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/docs/ticker-bot/ticker.gif" 
-    alt="Repo Ticker Stats" 
-    style="height:33px;" />
+  <img  
+	  src="https://raw.githubusercontent.com/statikfintechllc/WorkFlowRepo/master/docs/ticker-bot/ticker.gif" 
+  alt="Repo Ticker Stats" 
+  style="height:33px;" />
 <div align="center"> 
   <img src="https://img.shields.io/github/stars/statikfintechllc/GodCore?style=social" alt="Stars"/>
   <img src="https://img.shields.io/github/forks/statikfintechllc/GodCore?style=social" alt="Forks"/>
