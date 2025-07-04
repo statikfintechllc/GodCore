@@ -1,6 +1,6 @@
 <div align="center">
   <img  
-	  src="https://raw.githubusercontent.com/statikfintechllc/WorkFlowRepo/master/docs/ticker-bot/ticker.gif" 
+	  src="https://raw.githubusercontent.com/KDK-Grim/WorkFlowRepo-Mirror/master/docs/ticker-bot/ticker.gif" 
   alt="Repo Ticker Stats" 
   style="height:33px;" />
 <div align="center"> 
@@ -102,7 +102,7 @@ href="https://github.com/statikfintechllc/GodCore/blob/master/About Us/WHY_GREML
   <em>
 <div align="center">
   <a href="https://raw.githubusercontent.com/statikfintechllc/AscendAI/master/About US/">
-  <img src="https://raw.githubusercontent.com/statikfintechllc/WorkFlowRepo/master/docs/graph/traffic_graph.png" alt="Traffic Graph" />
+  <img src="https://raw.githubusercontent.com/KDK-Grim/WorkFlowRepo-Mirror/master/docs/graph/traffic_graph.png" alt="Traffic Graph" />
   </a>
 </div>
   
