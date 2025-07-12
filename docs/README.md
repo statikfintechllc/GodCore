@@ -160,6 +160,18 @@ git clone https://github.com/statikfintechllc/GodCore.git && \
 cd GodCore
 ```
 
+*Inside environment/install.sh Change this "/path/to/", so it matches your system:*
+
+```bash
+MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
+```
+
+*Inside run_llama.py Change this to match your system:*
+
+```bash
+MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
+```
+
 # 2. Install all dependencies and set up environment
 
 ```
@@ -174,18 +186,6 @@ cd .. && cd frontend/ && \
 source ~/miniconda3/etc/profile.d/conda.sh && \
 conda activate runmistral && \
 npm install
-```
-
-*Inside environment/install.sh Change this "/path/to/", so it matches your system:*
-
-```bash
-MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
-```
-
-*Inside run_llama.py Change this to match your system:*
-
-```bash
-MODEL_PATH = "/path/to/GodCore/models/Mistral-13B-Instruct/mistral-13b-instruct-v0.1.Q5_K_M.gguf"          #CHANGE ME
 ```
 
 ## **Start the Full Stack**
