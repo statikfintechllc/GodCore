@@ -158,8 +158,11 @@ or
 # 1. Clone and get in
 git clone https://github.com/statikfintechllc/GodCore.git && \
 cd GodCore
+```
 
 # 2. Install all dependencies and set up environment
+
+```
 cd environment && ./install.sh && \
 
 # 3. After install.sh runs it places's your downloaded model file here:(Always double check)
