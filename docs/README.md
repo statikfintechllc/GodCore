@@ -121,6 +121,9 @@ href="https://github.com/statikfintechllc/AscendDocs_of_GovSeverance">
     <img src="https://img.shields.io/badge/Why-darkred?style=for-the-badge&logo=dragon&logoColor=gold" alt="GremlinGPT"/>
   </a>
 </div>
+<div align="center">
+  <img src="https://komarev.com/ghpvc/?username=statikfintechllc&color=8b0000&style=flat-square" alt="Profile Views">
+</div>
 
 ---
 
